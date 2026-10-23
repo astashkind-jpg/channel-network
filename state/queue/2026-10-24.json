@@ -14,8 +14,9 @@
    "channel": "auto",
    "rubric": "Разбор поломки",
    "time": "2026-10-24T08:21:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -28,8 +29,9 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-10-24T14:25:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -42,8 +44,9 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-10-24T20:19:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   }
  ],
  "errors": [],
