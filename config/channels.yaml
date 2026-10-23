@@ -21,8 +21,8 @@ channels:
   - key: auto
     enabled: true
     title: "Под капотом"
-    chat_id: ""
-    invite_link: ""
+    chat_id: "https://t.me/pod_kapotom_avto"
+    invite_link: "https://t.me/+jMU5cyNZUfRlZjAy"
     tagline: "авто-лайфхаки и ремонт своими руками"
     emoji: "🚗"
     cluster: main
