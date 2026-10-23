@@ -1,0 +1,18 @@
+# Общие настройки сети
+name: "Сеть каналов"            # название сети в посте-каталоге
+
+review_hours: 3                 # сколько часов после сводки ждать вашего ответа, потом автопубликация
+# Модель Yandex AI Studio для всех каналов (у канала можно задать свою в channels.yaml → model).
+# Варианты: deepseek-v4.1-flash, qwen3.6-35b-a3b, aliceai-llm, aliceai-llm-flash, yandexgpt-5.1
+default_model: "deepseek-v4.1-flash"
+
+catalog_weekday: 6              # день поста «Наши каналы»: 0 = пн … 6 = вс
+catalog_window: "12:00-13:00"
+promo_per_channel_per_day: 1    # сколько строк кросс-пиара в день на канал
+
+video_max_age_days: 4           # брать видео из источников не старше N дней
+video_max_mb: 49                # лимит Bot API на загрузку — 50 МБ
+recent_topics: 60
+
+# Пост в источнике с этими словами считается рекламой и не репостится
+ad_markers: ["erid", "реклама", "#ad", "промокод", "розыгрыш", "казино", "ставки"]
