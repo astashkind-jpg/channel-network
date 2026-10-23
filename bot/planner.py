@@ -11,7 +11,7 @@ from .util import esc, human_date, now
 
 log = logging.getLogger(__name__)
 
-KIND_NAMES = {"photo": "фото", "video": "видео", "text": "текст"}
+KIND_NAMES = {"photo": "фото", "photo_text": "фото", "video": "видео", "text": "без картинки ⚠️"}
 
 
 def plan_day(ctx: Context, day: date, force: bool = False) -> dict:
@@ -33,6 +33,10 @@ def plan_day(ctx: Context, day: date, force: bool = False) -> dict:
     if day.weekday() == ctx.network.catalog_weekday:
         posts += catalog_posts(ctx, day)
     add_promo(ctx, [p for p in posts if p["rubric"] != "Каталог сети"])
+    for p in posts:
+        if p["kind"] == "text":
+            ch = ctx.channel(p["channel"])
+            errors.append(f"{ch.title if ch else p['channel']}, {p['rubric']}: без картинки — нажмите 🔄 Заменить")
     posts.sort(key=lambda p: p["time"])
 
     queue = {

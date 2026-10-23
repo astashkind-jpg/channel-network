@@ -81,16 +81,26 @@ def store_media(ctx: Context, kind: str, media) -> str:
 def build_text_post(ctx: Context, ch: Channel, rubric: Rubric, day: date, history: dict,
                     model: str | None = None) -> dict:
     gen = ctx.ai.generate_post(ch, rubric, human_date(day), history["topics"], model=model)
-    text = with_signature(ch, esc(gen["text"]))
+    raw_text = gen["text"]
+    # текст должен поместиться в подпись к фото (лимит Telegram 1024 знака)
+    if rubric.image and len(raw_text) + len(ch.signature) > SAFE_CAPTION - 60:
+        try:
+            shorter = ctx.ai.shorten(ch, raw_text, SAFE_CAPTION - 60 - len(ch.signature), model=model)
+            if 40 <= len(shorter) < len(raw_text):
+                raw_text = shorter
+        except Exception as e:
+            log.warning("не удалось сократить пост: %s", e)
+    text = with_signature(ch, esc(raw_text))
     history["topics"].append(gen["topic"])
     post = {"kind": "text", "text": text, "media": None, "topic": gen["topic"], "source": None}
-    if rubric.image and visible_len(text) <= SAFE_CAPTION:
+    if rubric.image:
         attach_image(ctx, ch, post, gen, history)
     return post
 
 
 def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict) -> None:
-    """Сначала генерация YandexART (если включена), при неудаче — поиск на Pixabay."""
+    """Картинка к посту. generate: сначала YandexART; затем бесплатные фотостоки
+    (Pixabay → Pexels → Openverse) по запросам ИИ; если точного нет — тематическое фото канала."""
     source = ch.image_source or ctx.network.image_source
     if source == "generate" and gen.get("image_prompt"):
         data = images.generate_image(gen["image_prompt"], ctx.secrets.yandex_api_key,
@@ -104,18 +114,24 @@ def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict
                 return
             except Exception as e:
                 log.warning("сгенерированная картинка не загрузилась: %s", e)
-    if gen.get("image_query"):
-        found = images.find_image(gen["image_query"], ctx.secrets.pixabay_key, history["images"],
-                                  ctx.rng, dry_run=ctx.dry_run, category=ch.image_category)
-        if found:
-            img_id, url = found
-            try:
-                post["media"] = store_media(ctx, "photo", url)
-                post["kind"] = "photo"
-                post["image_from"] = "pixabay"
-                history["images"].append(img_id)
-            except Exception as e:
-                log.warning("картинка не загрузилась (%s): %s", url, e)
+    queries = gen.get("image_queries") or ([gen["image_query"]] if gen.get("image_query") else [])
+    candidates = images.find_candidates(
+        queries, ch.image_fallback, ctx.secrets.pixabay_key, ctx.secrets.pexels_key,
+        history["images"], ctx.rng, category=ch.image_category, dry_run=ctx.dry_run)
+    for cand in candidates:
+        try:
+            post["media"] = store_media(ctx, "photo", cand.url)
+        except Exception as e:  # Telegram не смог скачать картинку — пробуем следующую
+            log.warning("картинка не загрузилась (%s): %s", cand.url, e)
+            continue
+        post["image_from"] = cand.key.split(":", 1)[0]
+        history["images"].append(cand.key)
+        if cand.credit:
+            post["text"] += f"\n\n{cand.credit}"
+        # если подпись всё же длиннее лимита — фото и текст уйдут двумя сообщениями
+        post["kind"] = "photo" if visible_len(post["text"]) <= CAPTION_LIMIT else "photo_text"
+        return
+    log.warning("пост %s остался без картинки: ни один фотосток не ответил", ch.key)
 
 
 def build_video_post(ctx: Context, ch: Channel, video: dict, history: dict) -> dict | None:
@@ -202,7 +218,8 @@ def add_promo(ctx: Context, posts: list[dict]) -> None:
         for _ in range(ctx.network.promo_per_channel_per_day):
             line = promo_line(ctx.rng.choice(targets))
             fitting = [p for p in own if "👉" not in p["text"] and
-                       (p["kind"] == "text" or visible_len(p["text"]) + visible_len(line) + 2 <= CAPTION_LIMIT)]
+                       (p["kind"] in ("text", "photo_text") or
+                        visible_len(p["text"]) + visible_len(line) + 2 <= CAPTION_LIMIT)]
             if not fitting:
                 break
             post = ctx.rng.choice(fitting)
@@ -220,9 +237,13 @@ def catalog_posts(ctx: Context, day: date) -> list[dict]:
         lines = [promo_line(c).replace("👉 ", "") for c in others]
         text = f"📚 <b>{esc(ctx.network.name)}: наши каналы</b>\n\n" + "\n".join(lines)
         slot = random_time_in_window(day, ctx.network.catalog_window, ctx.rng)
-        posts.append({"id": f"{ch.key}-catalog", "channel": ch.key, "rubric": "Каталог сети",
-                      "time": slot.isoformat(), "status": "pending", "auto": True, "kind": "text",
-                      "text": text, "media": None, "topic": "каталог", "source": None})
+        post = {"id": f"{ch.key}-catalog", "channel": ch.key, "rubric": "Каталог сети",
+                "time": slot.isoformat(), "status": "pending", "auto": True, "kind": "text",
+                "text": text, "media": None, "topic": "каталог", "source": None}
+        history = ctx.state.history(ch.key)
+        attach_image(ctx, ch, post, {"image_queries": []}, history)
+        ctx.state.save_history(ch.key, history)
+        posts.append(post)
     return posts
 
 

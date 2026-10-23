@@ -31,6 +31,9 @@ def publish_post(ctx: Context, post: dict) -> dict:
         raise TelegramError(f"канал {post['channel']} не настроен")
     if post["kind"] == "photo":
         return ctx.bot.send_photo(ch.chat_id, post["media"], post["text"])
+    if post["kind"] == "photo_text":
+        ctx.bot.send_photo(ch.chat_id, post["media"])
+        return ctx.bot.send_text(ch.chat_id, post["text"], preview=False)
     if post["kind"] == "video":
         return ctx.bot.send_video(ch.chat_id, post["media"], post["text"])
     return ctx.bot.send_text(ch.chat_id, post["text"], preview=False)

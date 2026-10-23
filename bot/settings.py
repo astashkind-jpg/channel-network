@@ -38,8 +38,9 @@ class Channel:
     rubrics: list[Rubric] = field(default_factory=list)
     video_sources: list[str] = field(default_factory=list)
     signature: str = ""         # строка в конце каждого поста (например, ❤️)
-    image_source: str = ""      # generate | pixabay; пусто — image_source из network.yaml
+    image_source: str = ""      # free | generate; пусто — image_source из network.yaml
     image_category: str = ""    # категория Pixabay (transportation, food, animals…) — точнее поиск
+    image_fallback: str = ""    # тематический запрос, если точной картинки не нашлось (например "car")
 
     @property
     def ready(self) -> bool:
@@ -51,7 +52,7 @@ class Network:
     name: str = "Сеть каналов"
     review_hours: float = 3
     default_model: str = "deepseek-v4.1-flash"
-    image_source: str = "generate"      # generate (YandexART) | pixabay
+    image_source: str = "free"          # free (фотостоки) | generate (YandexART, платно)
     art_model: str = "yandex-art/latest"
     image_aspect: str = "16:9"
     catalog_weekday: int = 6
@@ -71,6 +72,7 @@ class Secrets:
     yandex_api_key: str = ""
     yandex_folder_id: str = ""
     pixabay_key: str = ""
+    pexels_key: str = ""
     tg_api_id: str = ""
     tg_api_hash: str = ""
     tg_session: str = ""
@@ -85,6 +87,7 @@ class Secrets:
             yandex_api_key=g("YANDEX_API_KEY", ""),
             yandex_folder_id=g("YANDEX_FOLDER_ID", ""),
             pixabay_key=g("PIXABAY_KEY", ""),
+            pexels_key=g("PEXELS_KEY", ""),
             tg_api_id=g("TG_API_ID", ""),
             tg_api_hash=g("TG_API_HASH", ""),
             tg_session=g("TG_SESSION", ""),

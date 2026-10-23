@@ -108,18 +108,34 @@ class AI:
             '"image_prompt": "описание фото к посту на русском, 15–30 слов: конкретная сцена из текста — '
             'что именно в кадре, крупный план главного предмета, обстановка, время года и суток; без людей '
             'крупным планом, без текста и логотипов", '
-            '"image_query": "2–3 английских слова — главный предмет на фото буквально, '
-            'например frozen windshield wiper"}'
+            '"image_queries": ["три запроса для поиска фото на фотостоке, по-английски, 2–3 слова каждый, '
+            'от самого точного к общему", "например: frozen windshield wiper", "car windshield frost"]}'
         )
         raw = self.complete(model or self.model_for(ch), system, user)
         data = extract_json(raw)
         text = str(data.get("text", "")).strip()
         if len(text) < 40:
             raise AIError(f"слишком короткий текст: {raw[:200]}")
+        queries = data.get("image_queries") or []
+        if isinstance(queries, str):
+            queries = [queries]
+        queries = [str(q).strip() for q in queries if str(q).strip() and not str(q).startswith("три запроса")]
+        if data.get("image_query"):
+            queries.insert(0, str(data["image_query"]).strip())
         return {"topic": str(data.get("topic", "")).strip()[:80] or text[:50],
                 "text": text,
-                "image_query": str(data.get("image_query", "")).strip(),
+                "image_queries": queries[:3],
+                "image_query": queries[0] if queries else "",
                 "image_prompt": str(data.get("image_prompt", "")).strip()}
+
+    def shorten(self, ch: Channel, text: str, limit: int, model: str | None = None) -> str:
+        """Сокращает текст поста, чтобы он поместился в подпись к фото."""
+        if self.dry_run:
+            return text[:limit]
+        system = f"{ch.persona.strip()}\n\nТы редактор. Сокращаешь пост, сохраняя смысл, тон, эмодзи и структуру."
+        user = (f"Сократи пост до {limit - 80} знаков максимум. Ответь только новым текстом поста, "
+                f"без пояснений.\n\n{text}")
+        return self.complete(model or self.model_for(ch), system, user, temperature=0.4).strip()
 
     def video_caption(self, ch: Channel, original: str) -> str:
         system = (f"{ch.persona.strip()}\n\nТы пишешь короткие подписи к видео в канале. "
