@@ -19,6 +19,7 @@ HELP = """🤖 <b>Бот сети каналов</b>
 /channels — список каналов и их готовность
 /pause <i>ключ</i> или /pause all — остановить публикации
 /resume <i>ключ</i> или /resume all — возобновить
+/check — проверка: Yandex AI Studio, фотостоки, права бота в каналах
 /preview <i>ключ</i> — пробный пост канала (не публикуется)
 /preview <i>ключ модель</i> — пробный пост другой моделью, например
 <code>/preview auto qwen3.6-35b-a3b</code>"""
@@ -202,6 +203,9 @@ def handle_message(ctx: Context, msg: dict) -> None:
         ctx.bot.send_text(chat_id, set_pause(ctx, arg, cmd == "/pause"))
     elif cmd == "/preview":
         ctx.bot.send_text(chat_id, preview_sample(ctx, arg))
+    elif cmd == "/check":
+        from .diagnostics import run_checks
+        ctx.bot.send_text(chat_id, run_checks(ctx))
 
 
 def set_pause(ctx: Context, key: str, pause: bool) -> str:
