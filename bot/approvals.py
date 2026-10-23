@@ -273,7 +273,7 @@ def preview_sample(ctx: Context, arg: str) -> str:
         return f"⚠️ Модель {esc(used_model)} не справилась: {esc(str(e)[:300])}"
     admin = ctx.secrets.admin_chat_id
     pic = {"art": " · картинка YandexART", "pixabay": " · картинка Pixabay", "pexels": " · картинка Pexels",
-           "openverse": " · картинка Openverse"}.get(post.get("image_from"), " · ⚠️ без картинки")
+           "openverse": " · картинка Openverse", "wikimedia": " · картинка Wikimedia"}.get(post.get("image_from"), " · ⚠️ без картинки")
     head = f"<i>Пробный пост · {esc(ch.title)} · {esc(rubric.name)} · {esc(used_model)}{pic}</i>"
     if post["kind"] == "photo":
         ctx.bot.send_text(admin, head)

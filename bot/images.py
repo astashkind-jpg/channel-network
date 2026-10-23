@@ -23,9 +23,12 @@ log = logging.getLogger(__name__)
 PIXABAY_URL = "https://pixabay.com/api/"
 PEXELS_URL = "https://api.pexels.com/v1/search"
 OPENVERSE_URL = "https://api.openverse.org/v1/images/"
+WIKIMEDIA_URL = "https://commons.wikimedia.org/w/api.php"
 ART_URL = "https://llm.api.cloud.yandex.net/foundationModels/v1/imageGenerationAsync"
 OPERATION_URL = "https://llm.api.cloud.yandex.net:443/operations/{}"
-UA = {"User-Agent": "channel-network-bot/1.0 (Telegram channels)"}
+UA = {"User-Agent": "channel-network-bot/1.0 (Telegram channels; contact via GitHub)"}
+# лицензии Wikimedia/Openverse, которые разрешают коммерческое использование
+FREE_LICENSES = ("public domain", "pd", "cc0", "cc by", "cc-by", "by", "by-sa")
 
 ART_STYLE = ("Фотореалистичная фотография, естественный свет, чёткий фокус на главном предмете. "
              "Без текста, надписей, логотипов и водяных знаков.")
@@ -36,7 +39,9 @@ class Candidate:
     key: str          # уникальный id, например "pixabay:123" — чтобы не повторяться в канале
     url: str
     score: int        # сколько слов запроса совпало с тегами/описанием
-    credit: str = ""  # подпись источника, если её просит сервис
+    credit: str = ""  # подпись источника/автора, если её требует лицензия или сервис
+    preview: str = "" # уменьшенная копия — для проверки картинки ИИ
+    ratio: float = 0.0  # доля слов запроса, найденных в тегах (0…1)
 
 
 # ─────────────── генерация YandexART (платно) ───────────────
@@ -81,6 +86,16 @@ def _words(text: str) -> set[str]:
     return {w for w in re.findall(r"[a-z]+", (text or "").lower()) if len(w) > 2}
 
 
+def _cand(key: str, url: str, text: str, qw: set[str], credit: str = "", preview: str = "") -> Candidate:
+    score = _score(text, qw)
+    return Candidate(key, url, score, credit=credit, preview=preview or url,
+                     ratio=score / max(len(qw), 1))
+
+
+def _strip_html(text: str) -> str:
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", text or "")).strip()
+
+
 def _score(text: str, query_words: set[str]) -> int:
     tags = _words(text)
     # совпадение слова или его начала (wiper ~ wipers, frozen ~ froze)
@@ -103,8 +118,8 @@ def search_pixabay(query: str, api_key: str, category: str = "") -> list[Candida
         log.warning("Pixabay '%s': %s", query, e)
         return []
     qw = _words(query)
-    return [Candidate(f"pixabay:{h['id']}", h.get("largeImageURL") or h["webformatURL"],
-                      _score(h.get("tags", ""), qw)) for h in hits if h.get("webformatURL")]
+    return [_cand(f"pixabay:{h['id']}", h.get("largeImageURL") or h["webformatURL"], h.get("tags", ""),
+                  qw, preview=h["webformatURL"]) for h in hits if h.get("webformatURL")]
 
 
 def search_pexels(query: str, api_key: str) -> list[Candidate]:
@@ -120,18 +135,18 @@ def search_pexels(query: str, api_key: str) -> list[Candidate]:
         log.warning("Pexels '%s': %s", query, e)
         return []
     qw = _words(query)
-    return [Candidate(f"pexels:{p['id']}", p["src"].get("large2x") or p["src"]["large"],
-                      _score(p.get("alt", ""), qw), credit="📷 Pexels") for p in photos if p.get("src")]
+    return [_cand(f"pexels:{p['id']}", p["src"].get("large2x") or p["src"]["large"], p.get("alt", ""), qw,
+                  credit="📷 Pexels", preview=p["src"].get("medium", "")) for p in photos if p.get("src")]
 
 
 def search_openverse(query: str) -> list[Candidate]:
-    """Только CC0 и Public Domain — подпись автора не требуется."""
+    """Фото с лицензиями для коммерческого использования (CC0, Public Domain, CC BY, CC BY-SA).
+    Для CC BY / BY-SA в пост добавляется подпись автора и лицензии."""
     if not query:
         return []
     try:
         resp = requests.get(OPENVERSE_URL, headers=UA, timeout=30, params={
-            "q": query[:100], "license": "cc0,pdm", "page_size": 30, "mature": "false",
-            "aspect_ratio": "wide"})
+            "q": query[:100], "license_type": "commercial", "page_size": 30, "mature": "false"})
         resp.raise_for_status()
         results = resp.json().get("results", [])
     except (requests.RequestException, ValueError) as e:
@@ -140,58 +155,123 @@ def search_openverse(query: str) -> list[Candidate]:
     qw = _words(query)
     out = []
     for r in results:
+        lic = (r.get("license") or "").lower()
+        if lic not in ("cc0", "pdm", "by", "by-sa") or not r.get("url"):
+            continue
         text = " ".join([r.get("title") or ""] + [t.get("name", "") for t in r.get("tags") or []])
-        if r.get("url"):
-            out.append(Candidate(f"openverse:{r['id']}", r["url"], _score(text, qw)))
+        credit = ""
+        if lic in ("by", "by-sa"):
+            author = (r.get("creator") or "автор").strip()[:60]
+            credit = f"📷 {author}, CC {lic.upper()} {r.get('license_version') or ''}".strip()
+        out.append(_cand(f"openverse:{r['id']}", r["url"], text, qw, credit=credit,
+                         preview=r.get("thumbnail") or r["url"]))
     return out
+
+
+def search_wikimedia(query: str) -> list[Candidate]:
+    """Wikimedia Commons — много технических фото (узлы авто, инструменты, история).
+    Берём только свободные лицензии; для CC BY / BY-SA — подпись автора."""
+    if not query:
+        return []
+    try:
+        resp = requests.get(WIKIMEDIA_URL, headers=UA, timeout=30, params={
+            "action": "query", "format": "json", "generator": "search", "gsrnamespace": 6,
+            "gsrsearch": f"{query[:100]} filetype:bitmap", "gsrlimit": 30,
+            "prop": "imageinfo", "iiprop": "url|extmetadata|mime|size", "iiurlwidth": 1280})
+        resp.raise_for_status()
+        pages = (resp.json().get("query") or {}).get("pages") or {}
+    except (requests.RequestException, ValueError) as e:
+        log.warning("Wikimedia '%s': %s", query, e)
+        return []
+    qw = _words(query)
+    out = []
+    for page in sorted(pages.values(), key=lambda p: p.get("index", 0)):
+        info = (page.get("imageinfo") or [{}])[0]
+        if info.get("mime") not in ("image/jpeg", "image/png") or (info.get("width") or 0) < 600:
+            continue
+        meta = info.get("extmetadata") or {}
+        lic = _strip_html((meta.get("LicenseShortName") or {}).get("value", ""))
+        low = lic.lower()
+        if not low or not any(low.startswith(f) for f in FREE_LICENSES) or "nc" in low.split("-"):
+            continue
+        title = page.get("title", "").removeprefix("File:")
+        desc = _strip_html((meta.get("ImageDescription") or {}).get("value", ""))[:300]
+        credit = ""
+        if not (low.startswith("public domain") or low.startswith("pd") or low.startswith("cc0")):
+            author = _strip_html((meta.get("Artist") or {}).get("value", "")) or "автор"
+            credit = f"📷 {author[:60]}, {lic} / Wikimedia Commons"
+        url = info.get("thumburl") or info.get("url")
+        if url:
+            out.append(_cand(f"wikimedia:{page.get('pageid')}", url, f"{title} {desc}", qw,
+                             credit=credit, preview=url))
+    return out
+
+
+SOURCE_RANK = {"pixabay": 0, "pexels": 1, "wikimedia": 2, "openverse": 3}
 
 
 def _sources(pixabay_key: str, pexels_key: str, category: str):
     return [
         ("pixabay", lambda q: search_pixabay(q, pixabay_key, category)),
         ("pexels", lambda q: search_pexels(q, pexels_key)),
+        ("wikimedia", search_wikimedia),
         ("openverse", search_openverse),
     ]
 
 
 def find_candidates(queries: list[str], fallback_query: str, pixabay_key: str, pexels_key: str,
                     used: list[str], rng: random.Random, category: str = "",
-                    dry_run: bool = False, limit: int = 5) -> list[Candidate]:
-    """Подходящие картинки в порядке предпочтения (несколько — на случай, если Telegram
-    не сможет скачать первую). Сначала точные совпадения по запросам ИИ, потом тематическое
-    фото канала (fallback_query) без строгой проверки тегов."""
+                    dry_run: bool = False, limit: int = 5, judge=None) -> list[Candidate]:
+    """Подходящие картинки в порядке предпочтения.
+
+    1. По каждому запросу ИИ (от точного к общему) собираем фото из всех источников и оставляем
+       те, где в тегах/описании есть слова запроса — чем больше совпало, тем выше.
+    2. Если задан judge (ИИ со зрением) — он выбирает из лучших то фото, где виден предмет поста.
+    3. Если точного нет — тематическое фото канала (fallback_query), чтобы пост не остался без картинки.
+    """
     if dry_run:
         return []
     used_set = set(used)
-    result: list[Candidate] = []
-    seen: set[str] = set()
-
-    def take(cands: list[Candidate], need_match: bool) -> None:
-        fresh = [c for c in cands if c.key not in used_set and c.key not in seen]
-        if need_match:
-            best = max((c.score for c in fresh), default=0)
-            if best == 0:
-                return
-            fresh = [c for c in fresh if c.score == best]
-        pick = fresh[:6]
-        rng.shuffle(pick)
-        for c in pick[:2]:
-            seen.add(c.key)
-            result.append(c)
-
-    for q in [q for q in queries if q and q.strip()][:3]:
+    matched: dict[str, Candidate] = {}
+    for qi, q in enumerate([q for q in queries if q and q.strip()][:4]):
         for name, search in _sources(pixabay_key, pexels_key, category):
-            take(search(q), need_match=True)
-            if len(result) >= limit:
-                return result[:limit]
-        if result:
-            return result  # нашлось точное совпадение — общие запросы не нужны
-    # ничего точного: тематическое фото канала, чтобы пост не остался без картинки
+            for c in search(q):
+                if c.key in used_set or c.score == 0:
+                    continue
+                # точные запросы (первые) весят больше общих
+                c.ratio = c.ratio - qi * 0.05
+                if c.key not in matched or matched[c.key].ratio < c.ratio:
+                    matched[c.key] = c
+        good = [c for c in matched.values() if c.ratio >= 0.99]
+        if len(good) >= 8:
+            break  # достаточно фото с полным совпадением — дальше не ищем
+    ranked = sorted(matched.values(),
+                    key=lambda c: (-round(c.ratio, 2), SOURCE_RANK.get(c.key.split(":")[0], 9), rng.random()))
+    if ranked and judge:
+        shortlist = ranked[:6]
+        try:
+            best = judge(shortlist)
+        except Exception as e:  # проверка ИИ — улучшение, а не обязательный шаг
+            log.warning("проверка картинок ИИ: %s", e)
+            best = -1
+        if best is None:      # ИИ: ни одна не подходит — к тематическому фото
+            ranked = []
+        elif best >= 0:
+            chosen = shortlist[best]
+            ranked = [chosen] + [c for c in ranked if c.key != chosen.key]
+    if ranked:
+        return ranked[:limit]
+    # ничего точного: тематическое фото канала
+    result: list[Candidate] = []
     for q in [fallback_query, (fallback_query or "").split(" ")[0]]:
         if not q:
             continue
         for name, search in _sources(pixabay_key, pexels_key, category):
-            take(search(q), need_match=False)
+            fresh = [c for c in search(q) if c.key not in used_set]
+            best = max((c.score for c in fresh), default=0)
+            pick = [c for c in fresh if c.score == best][:6]  # сначала лучше совпавшие с темой канала
+            rng.shuffle(pick)
+            result += pick[:2]
             if len(result) >= limit:
                 return result[:limit]
         if result:

@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import logging
 import os
+
+import requests
 import random
 from dataclasses import dataclass, field
 from datetime import date, datetime
@@ -78,6 +80,20 @@ def store_media(ctx: Context, kind: str, media) -> str:
     return fid
 
 
+def download_image(url: str) -> bytes | None:
+    """Скачиваем картинку сами: Telegram по URL открывает не все сайты (например, Wikimedia)."""
+    if not url.startswith("http"):
+        return None
+    try:
+        r = requests.get(url, timeout=30, headers={"User-Agent": "channel-network-bot/1.0"})
+        r.raise_for_status()
+        if not r.headers.get("Content-Type", "").startswith("image/") or len(r.content) > 9_000_000:
+            return None
+        return r.content
+    except requests.RequestException:
+        return None
+
+
 def build_text_post(ctx: Context, ch: Channel, rubric: Rubric, day: date, history: dict,
                     model: str | None = None) -> dict:
     gen = ctx.ai.generate_post(ch, rubric, human_date(day), history["topics"], model=model)
@@ -115,13 +131,17 @@ def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict
             except Exception as e:
                 log.warning("сгенерированная картинка не загрузилась: %s", e)
     queries = gen.get("image_queries") or ([gen["image_query"]] if gen.get("image_query") else [])
+    judge = None
+    if ctx.network.image_check and not ctx.dry_run:
+        topic, plain = post.get("topic", ""), post["text"]
+        judge = lambda cands: ctx.ai.pick_image(topic, plain, cands)
     candidates = images.find_candidates(
         queries, ch.image_fallback, ctx.secrets.pixabay_key, ctx.secrets.pexels_key,
-        history["images"], ctx.rng, category=ch.image_category, dry_run=ctx.dry_run)
+        history["images"], ctx.rng, category=ch.image_category, dry_run=ctx.dry_run, judge=judge)
     for cand in candidates:
         try:
-            post["media"] = store_media(ctx, "photo", cand.url)
-        except Exception as e:  # Telegram не смог скачать картинку — пробуем следующую
+            post["media"] = store_media(ctx, "photo", download_image(cand.url) or cand.url)
+        except Exception as e:  # картинка недоступна — пробуем следующую
             log.warning("картинка не загрузилась (%s): %s", cand.url, e)
             continue
         post["image_from"] = cand.key.split(":", 1)[0]

@@ -108,8 +108,14 @@ class AI:
             '"image_prompt": "описание фото к посту на русском, 15–30 слов: конкретная сцена из текста — '
             'что именно в кадре, крупный план главного предмета, обстановка, время года и суток; без людей '
             'крупным планом, без текста и логотипов", '
-            '"image_queries": ["три запроса для поиска фото на фотостоке, по-английски, 2–3 слова каждый, '
-            'от самого точного к общему", "например: frozen windshield wiper", "car windshield frost"]}'
+            '"image_queries": ["4 запроса для поиска фото на фотостоке, по-английски, 1–3 слова"]}\n\n'
+            "Как составлять image_queries: назови ПРЕДМЕТ, который должен быть в кадре, так, как фотограф "
+            "подписал бы снимок, — от самого точного к чуть более общему, но всегда про тот же предмет. "
+            "Не используй общие слова без предмета (car, auto, food, nature). Примеры: пост про уровень "
+            'антифриза → ["coolant reservoir", "engine coolant", "radiator cap", "car engine bay"]; '
+            'пост про примёрзшие дворники → ["frozen windshield wiper", "windshield frost", "wiper blade", '
+            '"icy windshield"]; рецепт сырников → ["syrniki", "cottage cheese pancakes", "pancakes plate", '
+            '"breakfast pancakes"].'
         )
         raw = self.complete(model or self.model_for(ch), system, user)
         data = extract_json(raw)
@@ -127,6 +133,57 @@ class AI:
                 "image_queries": queries[:3],
                 "image_query": queries[0] if queries else "",
                 "image_prompt": str(data.get("image_prompt", "")).strip()}
+
+    def pick_image(self, topic: str, text: str, candidates: list) -> int | None:
+        """ИИ со зрением смотрит на найденные фото и выбирает то, где виден предмет поста.
+        Возвращает индекс фото, None — если ни одно не подходит."""
+        import base64
+        if self.dry_run or not candidates:
+            return 0
+        parts = [{"type": "text", "text": (
+            f"Пост в Telegram-канале. Тема: «{topic}». Текст: «{text[:500]}»\n\n"
+            f"Ниже {len(candidates)} фото, пронумерованы по порядку с 1. Какое лучше всего иллюстрирует "
+            "именно этот пост — на нём крупно и узнаваемо виден предмет или ситуация из текста? "
+            "Хорошее качество и без надписей/водяных знаков — плюс. Ответь только числом — номером фото. "
+            "Если ни одно не показывает предмет поста, ответь 0.")}]
+        shown = 0
+        for c in candidates:
+            try:
+                r = requests.get(c.preview or c.url, timeout=20,
+                                 headers={"User-Agent": "channel-network-bot/1.0"})
+                r.raise_for_status()
+                if len(r.content) > 3_000_000:
+                    raise ValueError("слишком большой файл")
+                b64 = base64.b64encode(r.content).decode()
+                mime = r.headers.get("Content-Type", "image/jpeg").split(";")[0]
+            except (requests.RequestException, ValueError):
+                b64, mime = "", ""
+            if not b64:  # фото не скачалось — показываем заглушку, чтобы номера не съехали
+                parts.append({"type": "text", "text": f"Фото {len(parts)}: (не загрузилось)"})
+                continue
+            parts.append({"type": "image_url", "image_url": {"url": f"data:{mime};base64,{b64}"}})
+            shown += 1
+        if not shown:
+            raise AIError("ни одно фото не скачалось для проверки")
+        resp = requests.post(
+            YANDEX_CHAT_URL,
+            headers={"Authorization": f"Bearer {self.s.yandex_api_key}",
+                     "OpenAI-Project": self.s.yandex_folder_id, "Content-Type": "application/json"},
+            json={"model": model_uri(self.n.image_check_model, self.s.yandex_folder_id),
+                  "messages": [{"role": "user", "content": parts}], "temperature": 0, "max_tokens": 20},
+            timeout=120)
+        if resp.status_code != 200:
+            raise AIError(f"проверка картинок HTTP {resp.status_code}: {resp.text[:200]}")
+        answer = THINK_RE.sub("", resp.json()["choices"][0]["message"].get("content") or "")
+        m = re.search(r"\d+", answer)
+        if not m:
+            raise AIError(f"непонятный ответ: {answer[:50]}")
+        n = int(m.group())
+        if n == 0:
+            return None
+        if 1 <= n <= len(candidates):
+            return n - 1
+        raise AIError(f"номер вне диапазона: {n}")
 
     def shorten(self, ch: Channel, text: str, limit: int, model: str | None = None) -> str:
         """Сокращает текст поста, чтобы он поместился в подпись к фото."""
