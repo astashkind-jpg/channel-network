@@ -6,6 +6,13 @@ review_hours: 3                 # сколько часов после свод�
 # Варианты: deepseek-v4.1-flash, qwen3.6-35b-a3b, aliceai-llm, aliceai-llm-flash, yandexgpt-5.1
 default_model: "deepseek-v4.1-flash"
 
+# Картинки к постам:
+#   free     — бесплатные фотостоки: Pixabay → Pexels → Openverse (CC0/Public Domain);
+#   generate — сначала рисует YandexART (платно), при неудаче — те же фотостоки.
+image_source: "free"
+art_model: "yandex-art/latest"
+image_aspect: "16:9"            # пропорции сгенерированной картинки
+
 catalog_weekday: 6              # день поста «Наши каналы»: 0 = пн … 6 = вс
 catalog_window: "12:00-13:00"
 promo_per_channel_per_day: 1    # сколько строк кросс-пиара в день на канал

@@ -10,6 +10,10 @@
 # video_sources — каналы-источники для репоста видео (со ссылкой на источник). Пусто — видео-рубрика
 #                 заменяется текстовой.
 # rubrics.slots — номера окон (с 0), в которые ставится рубрика.
+# image_source — free (фотостоки) или generate (YandexART, платно); пусто — как в network.yaml.
+# image_category — категория Pixabay для запасного поиска (transportation, food, animals, nature,
+#                  buildings, industry, places, travel…); пусто — без категории.
+# image_fallback — тематическое фото канала, если точной картинки к посту не нашлось.
 
 channels:
 
@@ -17,13 +21,16 @@ channels:
   - key: auto
     enabled: true
     title: "Под капотом"
-    chat_id: "https://t.me/pod_kapotom_avto"
-    invite_link: "https://t.me/+jMU5cyNZUfRlZjAy"
+    chat_id: ""
+    invite_link: ""
     tagline: "авто-лайфхаки и ремонт своими руками"
     emoji: "🚗"
     cluster: main
     model: ""
     auto_approve: true
+    image_source: ""
+    image_category: "transportation"
+    image_fallback: "car"
     windows: ["08:00-09:30", "13:00-14:30", "19:00-21:00"]
     video_sources: []
     persona: |
@@ -55,6 +62,9 @@ channels:
     cluster: main
     model: ""
     auto_approve: true
+    image_source: ""
+    image_category: "buildings"
+    image_fallback: "workshop tools"
     windows: ["08:30-10:00", "13:30-15:00", "19:30-21:30"]
     video_sources: []
     persona: |
@@ -85,6 +95,9 @@ channels:
     cluster: adult
     model: ""
     auto_approve: true
+    image_source: ""
+    image_category: ""
+    image_fallback: "couple love"
     windows: ["09:00-10:30", "14:00-16:00", "21:00-23:00"]
     video_sources: []
     persona: |
@@ -117,6 +130,9 @@ channels:
     cluster: main
     model: ""
     auto_approve: true
+    image_source: ""
+    image_category: "food"
+    image_fallback: "healthy food"
     windows: ["07:30-09:00", "11:30-13:00", "17:00-19:00"]
     video_sources: []
     persona: |
@@ -144,6 +160,9 @@ channels:
     cluster: main
     model: ""
     auto_approve: true
+    image_source: ""
+    image_category: "animals"
+    image_fallback: "wild animal"
     windows: ["09:00-11:00", "15:00-17:00", "20:00-22:00"]
     video_sources: []
     persona: |
@@ -171,6 +190,9 @@ channels:
     cluster: main
     model: ""
     auto_approve: true
+    image_source: ""
+    image_category: ""
+    image_fallback: "vintage retro"
     windows: ["10:00-12:00", "16:00-18:00", "20:30-22:00"]
     video_sources: []
     persona: |
@@ -198,6 +220,9 @@ channels:
     cluster: adult
     model: ""
     auto_approve: false     # репосты из чужих 18+ каналов — только после вашего ✅
+    image_source: ""
+    image_category: ""
+    image_fallback: "night city lights"
     windows: ["12:00-14:00", "19:00-21:00", "22:00-23:59"]
     video_sources: []
     persona: |
@@ -207,7 +232,6 @@ channels:
     rubrics:
       - name: "Анекдот для взрослых"
         weight: 1
-        image: false
         prompt: "Короткий анекдот или смешная жизненная ситуация для взрослых на тему отношений. До 400 знаков."
       - name: "Видео"
         type: video
@@ -224,6 +248,9 @@ channels:
     cluster: main
     model: ""
     auto_approve: true
+    image_source: ""
+    image_category: "nature"
+    image_fallback: "flowers bouquet"
     windows: ["06:30-07:30", "12:00-13:00", "21:00-22:00"]
     video_sources: []
     persona: |
@@ -232,10 +259,10 @@ channels:
     rubrics:
       - name: "Доброе утро"
         slots: [0]
-        prompt: "Пожелание доброго утра (2–4 строки) с учётом дня недели и времени года. image_query: утренний пейзаж, цветы или кофе."
+        prompt: "Пожелание доброго утра (2–4 строки) с учётом дня недели и времени года. Картинка: утренний пейзаж, цветы или кофе."
       - name: "Повод дня"
         slots: [1]
-        prompt: "Если на эту дату есть известный праздник или памятный день — поздравление с ним; если не уверен — пожелание хорошего дня. 2–5 строк. image_query: по теме."
+        prompt: "Если на эту дату есть известный праздник или памятный день — поздравление с ним; если не уверен — пожелание хорошего дня. 2–5 строк. Картинка: по теме праздника или повода."
       - name: "Спокойной ночи"
         slots: [2]
-        prompt: "Пожелание спокойной ночи (2–4 строки), уютное. image_query: ночное небо, свечи, плед."
+        prompt: "Пожелание спокойной ночи (2–4 строки), уютное. Картинка: ночное небо, свечи, плед."
