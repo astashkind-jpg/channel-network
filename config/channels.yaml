@@ -30,7 +30,7 @@ channels:
     auto_approve: true
     image_source: ""
     image_category: "transportation"
-    image_fallback: "car"
+    image_fallback: "car engine bay"
     windows: ["08:00-09:30", "13:00-14:30", "19:00-21:00"]
     video_sources: []
     persona: |
