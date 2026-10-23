@@ -61,12 +61,12 @@ def with_signature(ch: Channel, text: str) -> str:
     return f"{text}\n\n{ch.signature}" if ch.signature else text
 
 
-def store_media(ctx: Context, kind: str, media: str) -> str:
-    """Загружает фото (URL) или видео (файл) в служебный канал и возвращает file_id.
+def store_media(ctx: Context, kind: str, media) -> str:
+    """Загружает фото (URL или байты) или видео (файл) в служебный канал и возвращает file_id.
     file_id потом используется и для предпросмотра, и для публикации."""
     if not ctx.secrets.storage_chat_id:
-        if kind == "video":
-            raise RuntimeError("для видео нужен STORAGE_CHAT_ID (служебный канал)")
+        if kind == "video" or isinstance(media, (bytes, bytearray)):
+            raise RuntimeError("для видео и сгенерированных картинок нужен STORAGE_CHAT_ID")
         return media  # фото можно публиковать прямо по URL
     if kind == "photo":
         msg = ctx.bot.send_photo(ctx.secrets.storage_chat_id, media)
@@ -84,18 +84,38 @@ def build_text_post(ctx: Context, ch: Channel, rubric: Rubric, day: date, histor
     text = with_signature(ch, esc(gen["text"]))
     history["topics"].append(gen["topic"])
     post = {"kind": "text", "text": text, "media": None, "topic": gen["topic"], "source": None}
-    if rubric.image and gen["image_query"] and visible_len(text) <= SAFE_CAPTION:
+    if rubric.image and visible_len(text) <= SAFE_CAPTION:
+        attach_image(ctx, ch, post, gen, history)
+    return post
+
+
+def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict) -> None:
+    """Сначала генерация YandexART (если включена), при неудаче — поиск на Pixabay."""
+    source = ch.image_source or ctx.network.image_source
+    if source == "generate" and gen.get("image_prompt"):
+        data = images.generate_image(gen["image_prompt"], ctx.secrets.yandex_api_key,
+                                     ctx.secrets.yandex_folder_id, ctx.network.art_model,
+                                     ctx.network.image_aspect, dry_run=ctx.dry_run)
+        if data:
+            try:
+                post["media"] = store_media(ctx, "photo", data)
+                post["kind"] = "photo"
+                post["image_from"] = "art"
+                return
+            except Exception as e:
+                log.warning("сгенерированная картинка не загрузилась: %s", e)
+    if gen.get("image_query"):
         found = images.find_image(gen["image_query"], ctx.secrets.pixabay_key, history["images"],
-                                  ctx.rng, dry_run=ctx.dry_run)
+                                  ctx.rng, dry_run=ctx.dry_run, category=ch.image_category)
         if found:
             img_id, url = found
             try:
                 post["media"] = store_media(ctx, "photo", url)
                 post["kind"] = "photo"
+                post["image_from"] = "pixabay"
                 history["images"].append(img_id)
             except Exception as e:
                 log.warning("картинка не загрузилась (%s): %s", url, e)
-    return post
 
 
 def build_video_post(ctx: Context, ch: Channel, video: dict, history: dict) -> dict | None:

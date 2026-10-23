@@ -62,6 +62,11 @@ class Bot:
                          reply_markup=buttons, disable_web_page_preview=not preview)
 
     def send_photo(self, chat_id, photo, caption="", buttons=None):
+        """photo — file_id/URL или байты картинки."""
+        if isinstance(photo, (bytes, bytearray)):
+            return self.call("sendPhoto", files={"photo": ("image.jpg", bytes(photo), "image/jpeg")},
+                             chat_id=chat_id, caption=caption or None, parse_mode="HTML",
+                             reply_markup=buttons)
         return self.call("sendPhoto", chat_id=chat_id, photo=photo, caption=caption or None,
                          parse_mode="HTML", reply_markup=buttons)
 

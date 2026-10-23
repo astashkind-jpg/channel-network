@@ -268,7 +268,8 @@ def preview_sample(ctx: Context, arg: str) -> str:
     except Exception as e:
         return f"⚠️ Модель {esc(used_model)} не справилась: {esc(str(e)[:300])}"
     admin = ctx.secrets.admin_chat_id
-    head = f"<i>Пробный пост · {esc(ch.title)} · {esc(rubric.name)} · {esc(used_model)}</i>"
+    pic = {"art": " · картинка YandexART", "pixabay": " · картинка Pixabay"}.get(post.get("image_from"), "")
+    head = f"<i>Пробный пост · {esc(ch.title)} · {esc(rubric.name)} · {esc(used_model)}{pic}</i>"
     if post["kind"] == "photo":
         ctx.bot.send_text(admin, head)
         ctx.bot.send_photo(admin, post["media"], post["text"])

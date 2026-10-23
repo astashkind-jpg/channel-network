@@ -38,6 +38,8 @@ class Channel:
     rubrics: list[Rubric] = field(default_factory=list)
     video_sources: list[str] = field(default_factory=list)
     signature: str = ""         # строка в конце каждого поста (например, ❤️)
+    image_source: str = ""      # generate | pixabay; пусто — image_source из network.yaml
+    image_category: str = ""    # категория Pixabay (transportation, food, animals…) — точнее поиск
 
     @property
     def ready(self) -> bool:
@@ -49,6 +51,9 @@ class Network:
     name: str = "Сеть каналов"
     review_hours: float = 3
     default_model: str = "deepseek-v4.1-flash"
+    image_source: str = "generate"      # generate (YandexART) | pixabay
+    art_model: str = "yandex-art/latest"
+    image_aspect: str = "16:9"
     catalog_weekday: int = 6
     catalog_window: str = "12:00-13:00"
     promo_per_channel_per_day: int = 1

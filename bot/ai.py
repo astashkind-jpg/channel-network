@@ -105,7 +105,11 @@ class AI:
             f"Темы, которые уже были (не повторяй их): {avoid}\n\n"
             "Ответь строго одним JSON-объектом без пояснений:\n"
             '{"topic": "тема поста в 3–6 словах", "text": "готовый текст поста", '
-            '"image_query": "2–4 английских слова для поиска фото на фотостоке, или пустая строка"}'
+            '"image_prompt": "описание фото к посту на русском, 15–30 слов: конкретная сцена из текста — '
+            'что именно в кадре, крупный план главного предмета, обстановка, время года и суток; без людей '
+            'крупным планом, без текста и логотипов", '
+            '"image_query": "2–3 английских слова — главный предмет на фото буквально, '
+            'например frozen windshield wiper"}'
         )
         raw = self.complete(model or self.model_for(ch), system, user)
         data = extract_json(raw)
@@ -114,7 +118,8 @@ class AI:
             raise AIError(f"слишком короткий текст: {raw[:200]}")
         return {"topic": str(data.get("topic", "")).strip()[:80] or text[:50],
                 "text": text,
-                "image_query": str(data.get("image_query", "")).strip()}
+                "image_query": str(data.get("image_query", "")).strip(),
+                "image_prompt": str(data.get("image_prompt", "")).strip()}
 
     def video_caption(self, ch: Channel, original: str) -> str:
         system = (f"{ch.persona.strip()}\n\nТы пишешь короткие подписи к видео в канале. "
