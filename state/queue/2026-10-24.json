@@ -47,9 +47,11 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-10-24T20:19:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-24T20:30:08.079398+03:00",
+   "message_id": 5
   }
  ],
  "errors": [],
