@@ -109,7 +109,11 @@ def check_telegram(ctx: Context) -> list[str]:
         try:
             m = ctx.bot.call("getChatMember", chat_id=chat_id, user_id=bot_id)
         except TelegramError as e:
-            return f"{FAIL} {title}: {_short(e)}"
+            hint = ""
+            if "not found" in str(e).lower():
+                hint = (f"\n    Сейчас в настройках: <code>{esc(str(chat_id))}</code>. Нужен @адрес публичного канала "
+                        "или числовой id вида -100… (напишите /id в канале).")
+            return f"{FAIL} {title}: {_short(e)}{hint}"
         if m.get("status") == "administrator" and m.get("can_post_messages", True):
             return f"{OK} {title}: бот — админ, может публиковать"
         if m.get("status") == "administrator":

@@ -107,13 +107,31 @@ def load_network(config_dir: Path | None = None) -> Network:
     return Network(**{k: v for k, v in data.items() if k in known})
 
 
+def normalize_chat_id(value) -> str:
+    """Понимает любой привычный вид: @name, name, t.me/name, https://t.me/name, -100123…"""
+    v = str(value or "").strip().strip('"').strip("'")
+    if not v:
+        return ""
+    if v.lstrip("-").isdigit():
+        return v
+    for prefix in ("https://", "http://"):
+        if v.startswith(prefix):
+            v = v[len(prefix):]
+    if v.startswith("t.me/") or v.startswith("telegram.me/"):
+        v = v.split("/", 1)[1]
+    if v.startswith("+") or v.startswith("joinchat"):
+        return v  # пригласительная ссылка — не адрес канала; /check покажет ошибку
+    v = v.split("/")[0].split("?")[0]
+    return v if v.startswith("@") else f"@{v}"
+
+
 def load_channels(config_dir: Path | None = None) -> list[Channel]:
     data = _load_yaml("channels.yaml", config_dir)
     channels = []
     for raw in data.get("channels", []):
         raw = dict(raw)
         rubrics = [Rubric(**r) for r in raw.pop("rubrics", [])]
-        raw["chat_id"] = str(raw.get("chat_id") or "")
+        raw["chat_id"] = normalize_chat_id(raw.get("chat_id"))
         channels.append(Channel(rubrics=rubrics, **raw))
     keys = [c.key for c in channels]
     if len(keys) != len(set(keys)):

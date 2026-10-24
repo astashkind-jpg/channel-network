@@ -170,14 +170,21 @@ class AI:
             headers={"Authorization": f"Bearer {self.s.yandex_api_key}",
                      "OpenAI-Project": self.s.yandex_folder_id, "Content-Type": "application/json"},
             json={"model": model_uri(self.n.image_check_model, self.s.yandex_folder_id),
-                  "messages": [{"role": "user", "content": parts}], "temperature": 0, "max_tokens": 20},
+                  "messages": [{"role": "user", "content": parts}], "temperature": 0,
+                  # рассуждающие модели (Qwen) сначала «думают» — нужен запас токенов
+                  "max_tokens": 2000},
             timeout=120)
         if resp.status_code != 200:
             raise AIError(f"проверка картинок HTTP {resp.status_code}: {resp.text[:200]}")
-        answer = THINK_RE.sub("", resp.json()["choices"][0]["message"].get("content") or "")
+        message = resp.json()["choices"][0]["message"]
+        answer = THINK_RE.sub("", message.get("content") or "").strip()
+        if not answer:  # ответ мог остаться только в рассуждениях — берём последнее число оттуда
+            reasoning = message.get("reasoning_content") or message.get("reasoning") or ""
+            nums = re.findall(r"\b\d+\b", reasoning)
+            answer = nums[-1] if nums else ""
         m = re.search(r"\d+", answer)
         if not m:
-            raise AIError(f"непонятный ответ: {answer[:50]}")
+            raise AIError(f"непонятный ответ модели: «{answer[:50] or 'пусто'}»")
         n = int(m.group())
         if n == 0:
             return None
