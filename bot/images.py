@@ -42,6 +42,8 @@ class Candidate:
     credit: str = ""  # подпись источника/автора, если её требует лицензия или сервис
     preview: str = "" # уменьшенная копия — для проверки картинки ИИ
     ratio: float = 0.0  # доля слов запроса, найденных в тегах (0…1)
+    query_index: int = 0  # номер запроса ИИ, по которому найдено фото (0 — главная сцена)
+    via: str = ""     # как выбрано: ai — проверено ИИ, tags — по тегам, fallback — тематическое фото
 
 
 # ─────────────── генерация YandexART (платно) ───────────────
@@ -219,49 +221,76 @@ def _sources(pixabay_key: str, pexels_key: str, category: str):
     ]
 
 
+def _shortlists(buckets: list[list[Candidate]], size: int = 8) -> list[list[Candidate]]:
+    """Делит найденные фото на подборки для ИИ: в каждой больше всего фото по главному запросу,
+    но есть и по остальным — чтобы ИИ было из чего выбрать."""
+    quotas = [3, 2, 2, 1]
+    pools = [list(b) for b in buckets]
+    lists = []
+    while any(pools) and len(lists) < 2:
+        batch: list[Candidate] = []
+        for i, pool in enumerate(pools):
+            take = quotas[i] if i < len(quotas) else 1
+            batch += pool[:take]
+            del pool[:take]
+        # если каких-то запросов не хватило — добираем из остальных по порядку
+        for pool in pools:
+            while pool and len(batch) < size:
+                batch.append(pool.pop(0))
+        if batch:
+            lists.append(batch[:size])
+    return lists
+
+
 def find_candidates(queries: list[str], fallback_query: str, pixabay_key: str, pexels_key: str,
                     used: list[str], rng: random.Random, category: str = "",
                     dry_run: bool = False, limit: int = 5, judge=None) -> list[Candidate]:
     """Подходящие картинки в порядке предпочтения.
 
-    1. По каждому запросу ИИ (от точного к общему) собираем фото из всех источников и оставляем
-       те, где в тегах/описании есть слова запроса — чем больше совпало, тем выше.
-    2. Если задан judge (ИИ со зрением) — он выбирает из лучших то фото, где виден предмет поста.
-    3. Если точного нет — тематическое фото канала (fallback_query), чтобы пост не остался без картинки.
+    1. Запросы ИИ идут от главной сцены поста к синонимам. Фото по первому запросу всегда важнее фото
+       по следующим; внутри запроса — у кого в тегах/описании больше слов запроса.
+    2. Если задан judge (ИИ со зрением), он смотрит подборку из 8 фото (больше всего — по главной сцене)
+       и выбирает подходящее. Не подошло ни одно — вторая подборка. Снова нет — тематическое фото канала.
+    3. Без judge — берём лучшее по порядку запросов и тегам.
     """
     if dry_run:
         return []
     used_set = set(used)
-    matched: dict[str, Candidate] = {}
+    seen: set[str] = set()
+    buckets: list[list[Candidate]] = []
     for qi, q in enumerate([q for q in queries if q and q.strip()][:4]):
+        bucket = []
         for name, search in _sources(pixabay_key, pexels_key, category):
             for c in search(q):
-                if c.key in used_set or c.score == 0:
+                if c.key in used_set or c.key in seen or c.score == 0:
                     continue
-                # точные запросы (первые) весят больше общих
-                c.ratio = c.ratio - qi * 0.05
-                if c.key not in matched or matched[c.key].ratio < c.ratio:
-                    matched[c.key] = c
-        good = [c for c in matched.values() if c.ratio >= 0.99]
-        if len(good) >= 8:
-            break  # достаточно фото с полным совпадением — дальше не ищем
-    ranked = sorted(matched.values(),
-                    key=lambda c: (-round(c.ratio, 2), SOURCE_RANK.get(c.key.split(":")[0], 9), rng.random()))
+                c.query_index = qi
+                seen.add(c.key)
+                bucket.append(c)
+        bucket.sort(key=lambda c: (-c.score, SOURCE_RANK.get(c.key.split(":")[0], 9), rng.random()))
+        buckets.append(bucket)
+    ranked = [c for b in buckets for c in b]
+
     if ranked and judge:
-        shortlist = ranked[:6]
-        try:
-            best = judge(shortlist)
-        except Exception as e:  # проверка ИИ — улучшение, а не обязательный шаг
-            log.warning("проверка картинок ИИ: %s", e)
-            best = -1
-        if best is None:      # ИИ: ни одна не подходит — к тематическому фото
-            ranked = []
-        elif best >= 0:
-            chosen = shortlist[best]
-            ranked = [chosen] + [c for c in ranked if c.key != chosen.key]
+        judge_failed = False
+        for shortlist in _shortlists(buckets):
+            try:
+                best = judge(shortlist)
+            except Exception as e:  # проверка ИИ — улучшение, а не обязательный шаг
+                log.warning("проверка картинок ИИ: %s", e)
+                judge_failed = True
+                break
+            if best is not None and 0 <= best < len(shortlist):
+                chosen = shortlist[best]
+                chosen.via = "ai"
+                return [chosen] + [c for c in ranked if c.key != chosen.key][:limit - 1]
+        if not judge_failed:
+            ranked = []  # ИИ отверг все подборки — к тематическому фото
     if ranked:
+        for c in ranked:
+            c.via = "tags"
         return ranked[:limit]
-    # ничего точного: тематическое фото канала
+    # ничего подходящего: тематическое фото канала
     result: list[Candidate] = []
     for q in [fallback_query, (fallback_query or "").split(" ")[0]]:
         if not q:
@@ -271,6 +300,8 @@ def find_candidates(queries: list[str], fallback_query: str, pixabay_key: str, p
             best = max((c.score for c in fresh), default=0)
             pick = [c for c in fresh if c.score == best][:6]  # сначала лучше совпавшие с темой канала
             rng.shuffle(pick)
+            for c in pick[:2]:
+                c.via = "fallback"
             result += pick[:2]
             if len(result) >= limit:
                 return result[:limit]

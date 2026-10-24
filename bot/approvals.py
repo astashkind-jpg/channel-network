@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from datetime import date, datetime
 
-from .core import Context, rebuild_post
+from .core import Context, rebuild_post, replace_image
 from .tg import TelegramError, keyboard
 from .util import esc, now, short_date
 
@@ -28,8 +28,11 @@ STATUS_ICON = {"pending": "⏳", "approved": "✅", "rejected": "❌", "publishe
                "failed": "⚠️", "expired": "⌛", "replaced": "🔄"}
 
 
-def post_buttons(day: str, pid: str) -> dict:
-    return keyboard([[("✅", f"a:{day}:{pid}"), ("❌", f"r:{day}:{pid}"), ("🔄 Заменить", f"g:{day}:{pid}")]])
+def post_buttons(day: str, pid: str, photo: bool = True) -> dict:
+    rows = [[("✅", f"a:{day}:{pid}"), ("❌", f"r:{day}:{pid}"), ("🔄 Новый пост", f"g:{day}:{pid}")]]
+    if photo:
+        rows.append([("🖼 Другая картинка", f"p:{day}:{pid}")])
+    return keyboard(rows)
 
 
 def is_admin(ctx: Context, user_id) -> bool:
@@ -115,6 +118,23 @@ def handle_callback(ctx: Context, cb: dict) -> None:
         post["status"] = "rejected"
         ctx.bot.answer(cb["id"], "Не выйдет")
         ctx.bot.edit_buttons(chat_id, message_id, keyboard([[("❌ Отклонён", "x"), ("↩️ Вернуть", f"a:{day}:{pid}")]]))
+    elif action == "p":
+        ctx.bot.answer(cb["id"], "Ищу другую картинку, около минуты")
+        ctx.bot.edit_buttons(chat_id, message_id, keyboard([[("🖼 Ищу…", "x")]]))
+        try:
+            new = replace_image(ctx, post)
+        except Exception as e:
+            log.exception("замена картинки")
+            new = None
+            ctx.bot.send_text(ctx.secrets.admin_chat_id, f"⚠️ Не удалось заменить картинку: {esc(str(e)[:200])}")
+        if new:
+            queue["posts"][queue["posts"].index(post)] = new
+            ctx.bot.edit_buttons(chat_id, message_id, keyboard([[("🖼 Заменена ниже", "x")]]))
+            send_preview(ctx, queue, new)
+        else:
+            ctx.bot.send_text(ctx.secrets.admin_chat_id, "🖼 Другой подходящей картинки не нашлось — "
+                                                         "попробуйте «🔄 Новый пост».")
+            ctx.bot.edit_buttons(chat_id, message_id, post_buttons(day, pid))
     elif action == "g":
         ctx.bot.answer(cb["id"], "Готовлю замену, около минуты")
         ctx.bot.edit_buttons(chat_id, message_id, keyboard([[("🔄 Заменяю…", "x")]]))
@@ -139,13 +159,16 @@ def preview_header(ctx: Context, post: dict) -> str:
     t = datetime.fromisoformat(post["time"])
     title = esc(ch.title) if ch else post["channel"]
     hand = "" if post.get("auto", True) else " · ✋ ручное"
-    return f"<i>{ch.emoji if ch else ''} {title} · {t:%H:%M} · {esc(post['rubric'])}{hand}</i>\n\n"
+    via = {"ai": "🖼 выбрана ИИ", "tags": "🖼 по тегам", "fallback": "🖼 тематическая (точной не нашлось)"}.get(
+        post.get("image_via"), "")
+    via = f" · {via}" if via else ""
+    return f"<i>{ch.emoji if ch else ''} {title} · {t:%H:%M} · {esc(post['rubric'])}{hand}{via}</i>\n\n"
 
 
 def send_preview(ctx: Context, queue: dict, post: dict) -> None:
     admin = ctx.secrets.admin_chat_id
     header = preview_header(ctx, post)
-    buttons = post_buttons(queue["date"], post["id"])
+    buttons = post_buttons(queue["date"], post["id"], photo=post["kind"] != "video")
     try:
         if post["kind"] == "photo":
             # заголовок может не влезть в подпись — отправляем его отдельно

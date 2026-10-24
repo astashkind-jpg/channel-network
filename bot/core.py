@@ -114,7 +114,8 @@ def build_text_post(ctx: Context, ch: Channel, rubric: Rubric, day: date, histor
     return post
 
 
-def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict) -> None:
+def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict,
+                 exclude: tuple = ()) -> None:
     """Картинка к посту. generate: сначала YandexART; затем бесплатные фотостоки
     (Pixabay → Pexels → Openverse) по запросам ИИ; если точного нет — тематическое фото канала."""
     source = ch.image_source or ctx.network.image_source
@@ -135,9 +136,11 @@ def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict
     if ctx.network.image_check and not ctx.dry_run:
         topic, plain = post.get("topic", ""), post["text"]
         judge = lambda cands: ctx.ai.pick_image(topic, plain, cands)
+    post["image_queries"] = queries
     candidates = images.find_candidates(
         queries, ch.image_fallback, ctx.secrets.pixabay_key, ctx.secrets.pexels_key,
-        history["images"], ctx.rng, category=ch.image_category, dry_run=ctx.dry_run, judge=judge)
+        history["images"] + list(exclude), ctx.rng, category=ch.image_category, dry_run=ctx.dry_run,
+        judge=judge)
     for cand in candidates:
         try:
             post["media"] = store_media(ctx, "photo", download_image(cand.url) or cand.url)
@@ -145,6 +148,9 @@ def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict
             log.warning("картинка не загрузилась (%s): %s", cand.url, e)
             continue
         post["image_from"] = cand.key.split(":", 1)[0]
+        post["image_key"] = cand.key
+        post["image_via"] = cand.via
+        post["image_credit"] = cand.credit
         history["images"].append(cand.key)
         if cand.credit:
             post["text"] += f"\n\n{cand.credit}"
@@ -265,6 +271,29 @@ def catalog_posts(ctx: Context, day: date) -> list[dict]:
         ctx.state.save_history(ch.key, history)
         posts.append(post)
     return posts
+
+
+def replace_image(ctx: Context, post: dict) -> dict | None:
+    """Кнопка 🖼: другая картинка к тому же тексту."""
+    ch = ctx.channel(post["channel"])
+    if not ch or post["kind"] not in ("photo", "photo_text", "text"):
+        return None
+    new = dict(post)
+    credit = post.get("image_credit") or ""
+    if credit and new["text"].endswith(f"\n\n{credit}"):
+        new["text"] = new["text"][: -len(credit) - 2]
+    for k in ("media", "image_from", "image_key", "image_via", "image_credit"):
+        new.pop(k, None)
+    new["kind"] = "text"
+    history = ctx.state.history(ch.key)
+    queries = post.get("image_queries") or []
+    exclude = tuple(k for k in [post.get("image_key")] if k)
+    attach_image(ctx, ch, new, {"image_queries": queries}, history, exclude=exclude)
+    ctx.state.save_history(ch.key, history)
+    if new["kind"] == "text":
+        return None
+    new["status"] = "pending"
+    return new
 
 
 def rebuild_post(ctx: Context, post: dict) -> dict | None:
