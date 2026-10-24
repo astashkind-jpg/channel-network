@@ -24,7 +24,8 @@
    "rubric": "Лайфхак",
    "time": "2026-10-25T13:45:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 51
   }
  ],
  "errors": [
