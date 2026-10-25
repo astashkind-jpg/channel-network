@@ -153,8 +153,8 @@ channels:
   - key: nature
     enabled: true
     title: "Дикая планета"
-    chat_id: ""
-    invite_link: ""
+    chat_id: "-1004421262596"
+    invite_link: "https://t.me/dikaya_planeta_zoo"
     tagline: "удивительные животные и природа"
     emoji: "🐾"
     cluster: main
