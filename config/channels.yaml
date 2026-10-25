@@ -55,8 +55,8 @@ channels:
   - key: diy
     enabled: true
     title: "Руки из плеч"
-    chat_id: ""
-    invite_link: ""
+    chat_id: "-1003865684905"
+    invite_link: "https://t.me/ruki_iz_plech_diy"
     tagline: "ремонт, самоделки и хитрости мастеров"
     emoji: "🔨"
     cluster: main
