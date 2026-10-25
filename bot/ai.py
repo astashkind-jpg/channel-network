@@ -63,6 +63,8 @@ class AI:
                 last_err = e
                 if " 400" in str(e) or " 401" in str(e) or " 403" in str(e) or " 404" in str(e):
                     break  # ошибка настроек — повтор не поможет
+                if "пустой ответ" in str(e) and attempt >= 1:
+                    break  # дважды пусто — пусть пишет запасная модель
                 log.warning("AI %s попытка %d: %s", model, attempt + 1, e)
             except (requests.RequestException, KeyError, IndexError, ValueError) as e:
                 last_err = e
@@ -82,7 +84,7 @@ class AI:
                   "messages": [{"role": "system", "content": system},
                                {"role": "user", "content": user}],
                   "temperature": temperature,
-                  "max_tokens": 2000},
+                  "max_tokens": 6000},  # рассуждающим моделям нужен запас на «размышления»
             timeout=180,
         )
         if resp.status_code != 200:
@@ -119,11 +121,24 @@ class AI:
             '"car engine bay"]; рецепт сырников → ["syrniki", "cottage cheese pancakes", "pancakes plate", '
             '"breakfast pancakes"].'
         )
-        raw = self.complete(model or self.model_for(ch), system, user)
-        data = extract_json(raw)
-        text = str(data.get("text", "")).strip()
-        if len(text) < 40:
-            raise AIError(f"слишком короткий текст: {raw[:200]}")
+        first = model or self.model_for(ch)
+        chain = [first] + [m for m in self.n.fallback_models if m and m != first]
+        errors = []
+        data, text, used = {}, "", first
+        for used in chain:
+            try:
+                raw = self.complete(used, system, user)
+                data = extract_json(raw)
+                text = str(data.get("text", "")).strip()
+                if len(text) < 40:
+                    raise AIError(f"слишком короткий текст: {raw[:120]}")
+                break
+            except (AIError, ValueError) as e:
+                errors.append(f"{used}: {e}")
+                log.warning("пост моделью %s не получился, пробую следующую: %s", used, e)
+                text = ""
+        if not text:
+            raise AIError("; ".join(errors)[:400])
         queries = data.get("image_queries") or []
         if isinstance(queries, str):
             queries = [queries]
@@ -134,7 +149,8 @@ class AI:
                 "text": text,
                 "image_queries": queries[:4],
                 "image_query": queries[0] if queries else "",
-                "image_prompt": str(data.get("image_prompt", "")).strip()}
+                "image_prompt": str(data.get("image_prompt", "")).strip(),
+                "model": used}
 
     def pick_image(self, topic: str, text: str, candidates: list) -> int | None:
         """ИИ со зрением смотрит на найденные фото и выбирает то, где виден предмет поста.

@@ -52,6 +52,7 @@ class Network:
     name: str = "Сеть каналов"
     review_hours: float = 3
     default_model: str = "deepseek-v4.1-flash"
+    fallback_models: list[str] = field(default_factory=lambda: ["qwen3.6-35b-a3b", "aliceai-llm"])
     image_source: str = "gigachat"      # gigachat (Kandinsky) | free (фотостоки) | generate (YandexART)
     art_model: str = "yandex-art/latest"
     image_aspect: str = "16:9"
