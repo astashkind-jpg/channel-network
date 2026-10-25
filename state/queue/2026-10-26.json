@@ -22,7 +22,7 @@
    "time": "2026-10-26T08:57:00+03:00",
    "status": "pending",
    "auto": true,
-   "preview_message_id": 106
+   "preview_message_id": 114
   },
   {
    "kind": "photo",
@@ -40,7 +40,7 @@
    "time": "2026-10-26T14:26:00+03:00",
    "status": "pending",
    "auto": true,
-   "preview_message_id": 108
+   "preview_message_id": 116
   },
   {
    "kind": "photo",
@@ -61,7 +61,7 @@
    "time": "2026-10-26T20:35:00+03:00",
    "status": "pending",
    "auto": true,
-   "preview_message_id": 110
+   "preview_message_id": 118
   }
  ],
  "errors": [],
