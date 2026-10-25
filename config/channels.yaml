@@ -241,8 +241,8 @@ channels:
   - key: cards
     enabled: true
     title: "Открытка дня"
-    chat_id: ""
-    invite_link: ""
+       chat_id: "-1003483832148"
+    invite_link: "https://t.me/otkrytka_dnya_ru"
     tagline: "добрые открытки на каждый день"
     emoji: "💐"
     cluster: main
