@@ -18,7 +18,8 @@
    "rubric": "Лайфхак",
    "time": "2026-10-26T08:58:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 82
   },
   {
    "kind": "photo",
@@ -35,7 +36,8 @@
    "rubric": "Лайфхак",
    "time": "2026-10-26T13:04:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 84
   },
   {
    "kind": "photo",
@@ -52,7 +54,8 @@
    "rubric": "Лайфхак",
    "time": "2026-10-26T19:21:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 86
   }
  ],
  "errors": [],
