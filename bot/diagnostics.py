@@ -117,6 +117,24 @@ def check_stocks(ctx: Context) -> list[str]:
     return lines
 
 
+def check_stock_video(ctx: Context) -> list[str]:
+    from . import stockvideo
+    if not ctx.network.stock_video:
+        return [f"{OFF} Стоковые видео выключены (stock_video: false)"]
+    if not ctx.secrets.pixabay_key:
+        return [f"{OFF} Pixabay видео: нет ключа PIXABAY_KEY"]
+    try:
+        found, sec = _timed(lambda: stockvideo.search_pixabay_videos(
+            "lion", ctx.secrets.pixabay_key, 45 * 1024 * 1024))
+    except Exception as e:
+        return [f"{WARN} Pixabay видео: {_short(e)}"]
+    if found:
+        names = ", ".join(f"{c.emoji} {esc(c.title)}" for c in ctx.channels if c.ready and c.use_stock_video
+                          and any(r.type == "video" for r in c.rubrics))
+        return [f"{OK} Pixabay видео: найдено {len(found)}, {sec:.1f} с" + (f" — для: {names}" if names else "")]
+    return [f"{WARN} Pixabay видео: ничего не найдено или источник недоступен"]
+
+
 def check_telegram(ctx: Context) -> list[str]:
     lines = []
     try:
@@ -232,7 +250,7 @@ def run_checks(ctx: Context) -> str:
         ("🧠 Yandex AI Studio", lambda c: check_text_models(c) + check_vision(c) + check_art(c)),
         ("🎨 GigaChat", check_gigachat),
         ("🖼 Фотостоки", check_stocks),
-        ("🎬 Видео", check_video),
+        ("🎬 Видео", lambda c: check_stock_video(c) + check_video(c)),
     ]
     out = ["🩺 <b>Проверка бота</b>"]
     fails = 0

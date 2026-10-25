@@ -23,7 +23,11 @@ HELP = """🤖 <b>Бот сети каналов</b>
 /view — показать посты плана на завтра (как кнопка «👀 Посмотреть»)
 /preview <i>ключ</i> — пробный пост канала (не публикуется)
 /preview <i>ключ модель</i> — пробный пост другой моделью, например
-<code>/preview auto qwen3.6-35b-a3b</code>"""
+<code>/preview auto qwen3.6-35b-a3b</code>
+/preview <i>ключ</i> video — пробное видео-пост со стока Pixabay
+/videos — очередь видео, которые вы прислали
+
+🎬 <b>Своё видео:</b> перешлите мне видео из любого канала или пришлите с телефона — я спрошу, в какой канал его поставить. Оно выйдет в ближайшем плане с моей подписью и ссылкой на источник."""
 
 STATUS_ICON = {"pending": "⏳", "approved": "✅", "rejected": "❌", "published": "📤",
                "failed": "⚠️", "expired": "⌛", "replaced": "🔄"}
@@ -69,6 +73,103 @@ def process_updates(ctx: Context) -> None:
 
 
 # --- кнопки ---
+def video_of(msg: dict) -> dict | None:
+    """Видео из сообщения: обычное видео, GIF-анимация или видео-файл."""
+    if msg.get("video"):
+        return msg["video"]
+    if msg.get("animation"):
+        return msg["animation"]
+    doc = msg.get("document") or {}
+    if str(doc.get("mime_type", "")).startswith("video/"):
+        return doc
+    return None
+
+
+def forward_source(msg: dict) -> str:
+    """Откуда переслано: @канал/ссылка на пост, название канала или имя автора; пусто — ваше видео."""
+    origin = msg.get("forward_origin") or {}
+    chat = origin.get("chat") or msg.get("forward_from_chat") or {}
+    if chat:
+        username = chat.get("username")
+        mid = origin.get("message_id") or msg.get("forward_from_message_id")
+        if username and mid:
+            return f"https://t.me/{username}/{mid}"
+        if username:
+            return f"@{username}"
+        return chat.get("title") or ""
+    user = origin.get("sender_user") or msg.get("forward_from") or {}
+    if user.get("username"):
+        return f"@{user['username']}"
+    return origin.get("sender_user_name") or msg.get("forward_sender_name") or ""
+
+
+def handle_video_message(ctx: Context, msg: dict, video: dict) -> None:
+    """Вы прислали видео — спрашиваем, в какой канал его поставить."""
+    inbox = ctx.state.inbox()
+    vid = str(msg["message_id"])
+    inbox["pending"][vid] = {"key": f"inbox:{video.get('file_unique_id') or vid}", "file_id": video["file_id"],
+                             "text": msg.get("caption") or "", "source": forward_source(msg),
+                             "added": now().isoformat(timespec="minutes")}
+    ctx.state.save_inbox(inbox)
+    chans = ctx.ready_channels()
+    rows, row = [], []
+    for c in chans:
+        row.append((f"{c.emoji} {c.title}", f"q:{vid}:{c.key}"))
+        if len(row) == 2:
+            rows.append(row)
+            row = []
+    if row:
+        rows.append(row)
+    rows.append([("✖️ Не надо", f"q:{vid}:-")])
+    src = inbox["pending"][vid]["source"]
+    note = f"Источник: {esc(src)}" if src else "Источник не указан (ваше видео)"
+    mb = (video.get("file_size") or 0) / 1024 / 1024
+    ctx.bot.send_text(msg["chat"]["id"], f"🎬 Видео получено ({mb:.1f} МБ). {note}\nВ какой канал поставить?",
+                      keyboard(rows))
+
+
+def handle_video_choice(ctx: Context, cb: dict, vid: str, key: str) -> None:
+    msg = cb.get("message", {})
+    chat_id, message_id = msg.get("chat", {}).get("id"), msg.get("message_id")
+    inbox = ctx.state.inbox()
+    item = inbox["pending"].pop(vid, None)
+    if item is None:
+        ctx.bot.answer(cb["id"], "Это видео уже обработано")
+        ctx.bot.edit_buttons(chat_id, message_id)
+        return
+    if key == "-":
+        ctx.state.save_inbox(inbox)
+        ctx.bot.answer(cb["id"], "Ок, не ставлю")
+        ctx.bot.edit_text(chat_id, message_id, "🎬 Видео отменено.")
+        return
+    ch = ctx.channel(key)
+    if not ch:
+        ctx.bot.answer(cb["id"], "Канал не найден")
+        return
+    q = inbox["channels"].setdefault(key, [])
+    q.append(item)
+    ctx.state.save_inbox(inbox)
+    ctx.bot.answer(cb["id"], f"Поставлено: {ch.title}")
+    ctx.bot.edit_text(chat_id, message_id,
+                      f"✅ Видео в очереди канала {ch.emoji} {esc(ch.title)} (в очереди: {len(q)}).\n"
+                      "Выйдет в ближайшем вечернем плане — по одному-два видео в день. "
+                      "Подпись напишу сам, источник укажу.")
+
+
+def videos_text(ctx: Context) -> str:
+    inbox = ctx.state.inbox()
+    lines = ["🎬 <b>Ваши видео в очереди</b>"]
+    for c in ctx.channels:
+        n = len(inbox["channels"].get(c.key) or [])
+        if n:
+            lines.append(f"{c.emoji} {esc(c.title)}: {n}")
+    if len(lines) == 1:
+        lines.append("Пусто. Перешлите мне видео — я спрошу, в какой канал его поставить.")
+    if inbox["pending"]:
+        lines.append(f"\nЖдут выбора канала: {len(inbox['pending'])} (кнопки под сообщением «Видео получено»)")
+    return "\n".join(lines)
+
+
 def handle_callback(ctx: Context, cb: dict) -> None:
     if not is_admin(ctx, cb["from"]["id"]):
         ctx.bot.answer(cb["id"], "Нет доступа")
@@ -78,6 +179,9 @@ def handle_callback(ctx: Context, cb: dict) -> None:
     action = parts[0]
     msg = cb.get("message", {})
     chat_id, message_id = msg.get("chat", {}).get("id"), msg.get("message_id")
+    if action == "q" and len(parts) == 3:
+        handle_video_choice(ctx, cb, parts[1], parts[2])
+        return
     if action == "x" or len(parts) < 2:
         ctx.bot.answer(cb["id"])
         return
@@ -172,6 +276,10 @@ def preview_header(ctx: Context, post: dict) -> str:
            "gen": "🎨 нарисована GigaChat, проверена ИИ",
            "gen_warn": "⚠️ нарисована GigaChat, ИИ сомневается — проверьте"}.get(
         post.get("image_via"), "")
+    if post.get("kind") == "video":
+        via = {"stock": "🎬 видео Pixabay" + {"ai": ", выбрано ИИ", "fallback": ", тематическое"}.get(
+                   post.get("image_via"), ""),
+               "inbox": "🎬 ваше видео"}.get(post.get("video_from"), "🎬 видео из канала-источника")
     via = f" · {via}" if via else ""
     if post.get("image_via") == "gen_warn" and post.get("image_notes"):
         via += f"\nЗамечание ИИ к картинке: {esc(post['image_notes'][-1][:200])}"
@@ -238,6 +346,10 @@ def handle_message(ctx: Context, msg: dict) -> None:
             ctx.bot.send_text(chat_id, f"Ваш chat id: <code>{user_id}</code>\n"
                                        "Добавьте его в секрет ADMIN_CHAT_ID.")
         return
+    video = video_of(msg)
+    if video:
+        handle_video_message(ctx, msg, video)
+        return
     cmd, _, arg = text.partition(" ")
     cmd = cmd.split("@")[0].lower()
     arg = arg.strip()
@@ -253,6 +365,8 @@ def handle_message(ctx: Context, msg: dict) -> None:
         ctx.bot.send_text(chat_id, preview_sample(ctx, arg))
     elif cmd == "/view":
         view_command(ctx, arg)
+    elif cmd == "/videos":
+        ctx.bot.send_text(chat_id, videos_text(ctx))
     elif cmd == "/check":
         from .diagnostics import run_checks
         ctx.bot.send_text(chat_id, run_checks(ctx))
@@ -340,6 +454,22 @@ def preview_sample(ctx: Context, arg: str) -> str:
         return "У канала нет текстовых рубрик."
     history = ctx.state.history(ch.key)
     history_copy = {k: list(v) for k, v in history.items()}  # пробный пост не попадает в историю
+    if model and model.lower() in ("video", "видео"):
+        from .core import build_stock_video
+        if not ch.use_stock_video:
+            return "У этого канала стоковые видео выключены (каналы 18+ — только ваши видео и источники)."
+        try:
+            post = build_stock_video(ctx, ch, now().date(), history_copy)
+        except Exception as e:
+            return f"⚠️ Видео не получилось: {esc(str(e)[:300])}"
+        if not post:
+            return "⚠️ Подходящего ролика на Pixabay не нашлось — в плане будет текстовый пост. Попробуйте ещё раз."
+        how = {"ai": "выбрано ИИ", "fallback": "тематическое", "tags": "по тегам"}.get(post.get("image_via"), "")
+        ctx.bot.send_text(admin_id := ctx.secrets.admin_chat_id,
+                          f"<i>Пробное видео · {esc(ch.title)} · Pixabay · {how} · "
+                          f"запросы: {esc(', '.join(post.get('image_queries') or []))}</i>")
+        ctx.bot.send_video(admin_id, post["media"], post["text"])
+        return "☝️ Пробное видео выше, в канал оно не уйдёт."
     used_model = model or ctx.ai.model_for(ch)
     try:
         post = build_text_post(ctx, ch, rubric, now().date(), history_copy, model=model)

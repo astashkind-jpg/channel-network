@@ -68,6 +68,20 @@ class State:
         h["members"] = h["members"][-60:]
         self._write(self.root / "history" / f"{key}.json", h)
 
+    # --- видео, которые вы переслали боту: ждут выбора канала (pending) и очереди каналов ---
+    def inbox(self) -> dict:
+        b = self._read(self.root / "inbox.json", {})
+        b.setdefault("pending", {})
+        b.setdefault("channels", {})
+        return b
+
+    def save_inbox(self, b: dict) -> None:
+        # храним не больше 30 роликов, для которых канал ещё не выбран
+        if len(b["pending"]) > 30:
+            for k in sorted(b["pending"], key=lambda k: b["pending"][k].get("added", ""))[:-30]:
+                b["pending"].pop(k, None)
+        self._write(self.root / "inbox.json", b)
+
     # --- общее: offset getUpdates, пауза ---
     def meta(self) -> dict:
         m = self._read(self.root / "meta.json", {})

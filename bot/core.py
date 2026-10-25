@@ -9,7 +9,7 @@ import random
 from dataclasses import dataclass, field
 from datetime import date, datetime
 
-from . import images, reposter
+from . import images, reposter, stockvideo
 from .ai import AI
 from .settings import Channel, Network, Rubric, Secrets, load_channels, load_network
 from .state import State
@@ -230,6 +230,105 @@ def build_video_post(ctx: Context, ch: Channel, video: dict, history: dict) -> d
             "source": video["key"]}
 
 
+STOCK_VIDEO_RUBRIC = Rubric(
+    name="Видео", type="video",
+    prompt=("Подпись к короткому атмосферному ролику без сюжета и без звука (до 500 знаков): интересный факт "
+            "или полезная мысль по теме канала, которую можно показать видом из жизни — животное, природа, "
+            "машина в движении, руки мастера с инструментом, готовящееся блюдо. 1–2 эмодзи. "
+            "В image_queries — 4 запроса по-английски, 1–3 слова, чтобы найти такой ролик на стоке "
+            "(например: \"lion walking\", \"car driving rain\", \"drill wood\"). Сцена должна быть простой и "
+            "распространённой — редких предметов на стоке нет."))
+
+
+def build_inbox_video(ctx: Context, ch: Channel, history: dict) -> dict | None:
+    """Видео, которое вы переслали боту и поставили в очередь этого канала."""
+    inbox = ctx.state.inbox()
+    items = inbox["channels"].get(ch.key) or []
+    if not items:
+        return None
+    item = items.pop(0)
+    inbox["channels"][ch.key] = items
+    ctx.state.save_inbox(inbox)
+    try:
+        caption = esc(ctx.ai.video_caption(ch, item.get("text", "")))
+    except Exception as e:
+        log.warning("подпись к видео: %s", e)
+        caption = ""
+    src = item.get("source") or ""
+    if src:
+        caption = f"{caption}\n\n📎 Источник: {esc(src)}" if caption else f"📎 Источник: {esc(src)}"
+    history["videos"].append(item["key"])
+    return {"kind": "video", "text": with_signature(ch, caption), "media": item["file_id"],
+            "topic": "ваше видео", "source": item["key"], "video_from": "inbox"}
+
+
+def build_stock_video(ctx: Context, ch: Channel, day: date, history: dict, exclude: tuple = ()) -> dict | None:
+    """Бесплатный ролик Pixabay под тему: ИИ пишет подпись и запросы, затем ИИ со зрением
+    смотрит обложки найденных роликов и выбирает подходящий."""
+    if not (ctx.network.stock_video and ch.use_stock_video and ctx.secrets.pixabay_key):
+        return None
+    gen = ctx.ai.generate_post(ch, STOCK_VIDEO_RUBRIC, human_date(day), history["topics"])
+    max_bytes = min(ctx.network.video_max_mb, 45) * 1024 * 1024
+    cands = stockvideo.find_stock_videos(gen["image_queries"], ch.video_query or ch.image_fallback,
+                                         ctx.secrets.pixabay_key, history["videos"] + list(exclude),
+                                         max_bytes, category=ch.image_category)
+    if not cands:
+        log.info("стоковое видео для %s не найдено (%s)", ch.key, gen["image_queries"])
+        return None
+    chosen, via = cands[0], cands[0].via
+    if ctx.network.image_check and not ctx.dry_run:
+        try:
+            n = ctx.ai.pick_image(gen["topic"], gen["text"], cands[:6])
+            if n is None:
+                exact = [c for c in cands if c.via != "fallback"]
+                if exact:  # ИИ не увидел точного — берём тематический ролик, если он есть
+                    fb = [c for c in cands if c.via == "fallback"]
+                    chosen, via = (fb[0], "fallback") if fb else (exact[0], "tags")
+            else:
+                chosen, via = cands[n], "ai"
+        except Exception as e:
+            log.warning("выбор видео ИИ: %s", e)
+    path = None if ctx.dry_run else stockvideo.download_video(chosen.url, max_bytes)
+    if path is None and not ctx.dry_run:
+        return None
+    try:
+        fid = store_media(ctx, "video", path or chosen.url)
+    except Exception as e:
+        log.warning("стоковое видео не загрузилось: %s", e)
+        return None
+    finally:
+        if path:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+    text = gen["text"]
+    if len(text) > SAFE_CAPTION - len(ch.signature):
+        try:
+            text = ctx.ai.shorten(ch, text, SAFE_CAPTION - 60 - len(ch.signature))
+        except Exception:
+            text = text[:SAFE_CAPTION - 60]
+    history["topics"].append(gen["topic"])
+    history["videos"].append(chosen.key)
+    return {"kind": "video", "text": with_signature(ch, esc(text)), "media": fid, "topic": gen["topic"],
+            "source": chosen.key, "video_from": "stock", "image_via": via,
+            "image_queries": gen["image_queries"]}
+
+
+def build_video(ctx: Context, ch: Channel, day: date, history: dict, telethon: list | None = None,
+                exclude: tuple = ()) -> dict | None:
+    """Видео для слота: ваши пересланные → из каналов-источников (Telethon) → сток Pixabay."""
+    post = build_inbox_video(ctx, ch, history)
+    while post is None and telethon:
+        post = build_video_post(ctx, ch, telethon.pop(0), history)
+    if post is None:
+        try:
+            post = build_stock_video(ctx, ch, day, history, exclude=exclude)
+        except Exception as e:
+            log.warning("стоковое видео %s: %s", ch.key, e)
+    return post
+
+
 def pick_rubrics(ch: Channel, n: int, rng: random.Random) -> list[Rubric]:
     pool = [r for r in ch.rubrics if r.type in ("text", "video")]
     if not pool:
@@ -252,6 +351,9 @@ def plan_channel(ctx: Context, ch: Channel, day: date, errors: list[str]) -> lis
     history = ctx.state.history(ch.key)
     slots = sorted(random_time_in_window(day, w, rng) for w in ch.windows)
     rubrics = pick_rubrics(ch, len(slots), rng)
+    # ваше пересланное видео выходит и в канале без видео-рубрик — вместо одного текстового поста
+    if rubrics and ctx.state.inbox()["channels"].get(ch.key) and not any(r.type == "video" for r in rubrics):
+        rubrics[rng.randrange(len(rubrics))] = STOCK_VIDEO_RUBRIC
     need_videos = sum(1 for r in rubrics if r.type == "video")
     videos = reposter.find_videos(ch.video_sources, history["videos"], need_videos,
                                   ctx.secrets, ctx.network, dry_run=ctx.dry_run)
@@ -259,8 +361,8 @@ def plan_channel(ctx: Context, ch: Channel, day: date, errors: list[str]) -> lis
     for i, (slot, rubric) in enumerate(zip(slots, rubrics)):
         post = None
         try:
-            if rubric.type == "video" and videos:
-                post = build_video_post(ctx, ch, videos.pop(0), history)
+            if rubric.type == "video":
+                post = build_video(ctx, ch, day, history, videos)
             if post is None:
                 if rubric.type == "video":
                     rubric = fallback_text_rubric(ch, rng)
@@ -359,8 +461,7 @@ def rebuild_post(ctx: Context, post: dict) -> dict | None:
     if post["kind"] == "video":
         videos = reposter.find_videos(ch.video_sources, history["videos"], 1, ctx.secrets,
                                       ctx.network, dry_run=ctx.dry_run)
-        if videos:
-            new = build_video_post(ctx, ch, videos[0], history)
+        new = build_video(ctx, ch, day, history, videos, exclude=(post.get("source") or "",))
     if new is None:
         rubric = next((r for r in ch.rubrics if r.name == post["rubric"] and r.type == "text"), None)
         rubric = rubric or fallback_text_rubric(ch, ctx.rng)

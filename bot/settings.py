@@ -41,6 +41,12 @@ class Channel:
     image_source: str = ""      # gigachat | free | generate; пусто — image_source из network.yaml
     image_category: str = ""    # категория Pixabay (transportation, food, animals…) — точнее поиск
     image_fallback: str = ""    # тематический запрос, если точной картинки не нашлось (например "car")
+    stock_video: bool | None = None  # стоковые видео Pixabay; пусто — да для обычных каналов, нет для 18+
+    video_query: str = ""       # запасной запрос для стокового видео; пусто — image_fallback
+
+    @property
+    def use_stock_video(self) -> bool:
+        return self.cluster == "main" if self.stock_video is None else bool(self.stock_video)
 
     @property
     def ready(self) -> bool:
@@ -64,6 +70,7 @@ class Network:
     promo_per_channel_per_day: int = 1
     video_max_age_days: int = 4
     video_max_mb: int = 49
+    stock_video: bool = True            # видео-рубрики: брать бесплатные ролики Pixabay, если нет других
     recent_topics: int = 60
     ad_markers: list[str] = field(default_factory=lambda: ["erid", "реклама", "#ad", "промокод"])
 
