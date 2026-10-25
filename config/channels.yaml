@@ -183,8 +183,8 @@ channels:
   - key: history
     enabled: true
     title: "Было время"
-    chat_id: ""
-    invite_link: ""
+    chat_id: "-1003917427470"
+    invite_link: "https://t.me/bylo_vremya_istoriya"
     tagline: "история, СССР и вещи из нашего детства"
     emoji: "📜"
     cluster: main
