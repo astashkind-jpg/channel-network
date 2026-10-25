@@ -88,8 +88,8 @@ channels:
   - key: intimacy
     enabled: true
     title: "Между нами"
-    chat_id: ""
-    invite_link: ""
+    chat_id: "-1004434056933"
+    invite_link: "https://t.me/mezhdu_nami_18"
     tagline: "об отношениях и сексуальности без стеснения"
     emoji: "🍒"
     cluster: adult
