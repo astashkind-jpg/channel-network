@@ -5,6 +5,8 @@ review_hours: 3                 # сколько часов после свод�
 # Модель Yandex AI Studio для всех каналов (у канала можно задать свою в channels.yaml → model).
 # Варианты: deepseek-v4.1-flash, qwen3.6-35b-a3b, aliceai-llm, aliceai-llm-flash, yandexgpt-5.1
 default_model: "deepseek-v4.1-flash"
+# Если основная модель вернула пустой ответ или отказалась — пост пишет следующая по списку
+fallback_models: ["qwen3.6-35b-a3b", "aliceai-llm"]
 
 # Картинки к постам:
 #   gigachat — рисует Kandinsky через GigaChat (Сбер) точно под сцену поста; при неудаче — фотостоки;
