@@ -20,9 +20,10 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-10-26T08:57:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
-   "preview_message_id": 114
+   "preview_message_id": 114,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -38,9 +39,10 @@
    "channel": "auto",
    "rubric": "Сезонный уход",
    "time": "2026-10-26T14:26:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
-   "preview_message_id": 116
+   "preview_message_id": 116,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -59,9 +61,10 @@
    "channel": "auto",
    "rubric": "Разбор поломки",
    "time": "2026-10-26T20:35:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
-   "preview_message_id": 118
+   "preview_message_id": 118,
+   "approved_by": "auto"
   }
  ],
  "errors": [],
