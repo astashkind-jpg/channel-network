@@ -57,6 +57,27 @@ def check_vision(ctx: Context) -> list[str]:
                 f"    Бот продолжит работать: фото будут выбираться только по тегам."]
 
 
+def check_gigachat(ctx: Context) -> list[str]:
+    uses = ctx.network.image_source == "gigachat" or any(c.image_source == "gigachat" for c in ctx.channels)
+    if not uses:
+        return [f"{OFF} GigaChat выключен (image_source не gigachat)"]
+    if not ctx.secrets.gigachat_key:
+        return [f"{WARN} GigaChat: нет секрета GIGACHAT_AUTH_KEY — картинки берутся с фотостоков"]
+    cert = images.giga_ca()
+    if cert is True:
+        return [f"{FAIL} GigaChat: нет сертификата Минцифры (certs/russian_trusted_root_ca.pem)"]
+    try:
+        images.giga_token(ctx.secrets.gigachat_key)
+    except Exception as e:
+        return [f"{FAIL} GigaChat авторизация: {_short(e)} — проверьте GIGACHAT_AUTH_KEY"]
+    data, sec = _timed(lambda: images.generate_gigachat(
+        "автомобиль вечером на парковке, у него горит только одна передняя фара", ctx.secrets.gigachat_key))
+    if data:
+        return [f"{OK} GigaChat рисует картинки ({len(data) // 1024} КБ, {sec:.0f} с)"]
+    return [f"{FAIL} GigaChat: авторизация есть, но картинка не нарисовалась — см. лог Actions "
+            f"(возможно, генерация не входит в ваш пакет)"]
+
+
 def check_art(ctx: Context) -> list[str]:
     uses = ctx.network.image_source == "generate" or any(c.image_source == "generate" for c in ctx.channels)
     if not uses:
@@ -137,6 +158,7 @@ def run_checks(ctx: Context) -> str:
     sections = [
         ("🤖 Telegram", check_telegram),
         ("🧠 Yandex AI Studio", lambda c: check_text_models(c) + check_vision(c) + check_art(c)),
+        ("🎨 GigaChat", check_gigachat),
         ("🖼 Фотостоки", check_stocks),
     ]
     out = ["🩺 <b>Проверка бота</b>"]

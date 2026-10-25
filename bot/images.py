@@ -83,6 +83,73 @@ def generate_image(prompt: str, api_key: str, folder_id: str, model: str = "yand
     return None
 
 
+# ─────────────── генерация GigaChat (Kandinsky, Сбер) ───────────────
+GIGA_OAUTH_URL = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
+GIGA_API_URL = "https://api.giga.chat/v1"
+GIGA_CA_PATHS = ("certs/russian_trusted_root_ca.pem", "/tmp/russian_trusted_root_ca.pem")
+_giga_token: dict = {}
+
+
+def giga_ca() -> str | bool:
+    """Корневой сертификат Минцифры: без него HTTPS-запросы к Сберу не проходят проверку."""
+    import os
+    for p in GIGA_CA_PATHS:
+        if os.path.exists(p):
+            return p
+    return True
+
+
+def giga_token(auth_key: str, scope: str = "GIGACHAT_API_PERS") -> str:
+    import uuid
+    now = time.time()
+    if _giga_token.get("key") == auth_key and _giga_token.get("exp", 0) > now + 60:
+        return _giga_token["token"]
+    resp = requests.post(GIGA_OAUTH_URL, data={"scope": scope}, timeout=30, verify=giga_ca(), headers={
+        "Authorization": f"Basic {auth_key}", "RqUID": str(uuid.uuid4()),
+        "Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"})
+    if resp.status_code != 200:
+        raise RuntimeError(f"GigaChat авторизация HTTP {resp.status_code}: {resp.text[:200]}")
+    data = resp.json()
+    exp = data.get("expires_at", 0)
+    exp = exp / 1000 if exp > 1e11 else exp  # Сбер отдаёт миллисекунды
+    _giga_token.update(key=auth_key, token=data["access_token"], exp=exp or now + 1500)
+    return data["access_token"]
+
+
+def generate_gigachat(prompt: str, auth_key: str, model: str = "GigaChat",
+                      dry_run: bool = False) -> bytes | None:
+    """Kandinsky через GigaChat API: модель сама вызывает функцию рисования. Возвращает JPEG."""
+    if not prompt or not auth_key or dry_run:
+        return None
+    try:
+        token = giga_token(auth_key)
+        headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+        resp = requests.post(f"{GIGA_API_URL}/chat/completions", headers=headers, timeout=180,
+                             verify=giga_ca(), json={
+            "model": model, "function_call": "auto",
+            "messages": [
+                {"role": "system", "content": "Ты — фотограф. Рисуешь фотореалистичные снимки: естественный "
+                                              "свет, реальные предметы, без текста, надписей и логотипов."},
+                {"role": "user", "content": f"Нарисуй фотореалистичное фото, горизонтальное: {prompt.strip()}"}]})
+        if resp.status_code != 200:
+            log.warning("GigaChat HTTP %s: %s", resp.status_code, resp.text[:300])
+            return None
+        content = resp.json()["choices"][0]["message"].get("content") or ""
+        m = re.search(r'<img[^>]+src="([^"]+)"', content)
+        if not m:
+            log.warning("GigaChat не нарисовал картинку: %s", content[:200])
+            return None
+        img = requests.get(f"{GIGA_API_URL}/files/{m.group(1)}/content", timeout=60, verify=giga_ca(),
+                           headers={"Authorization": f"Bearer {token}", "Accept": "application/jpg"})
+        if img.status_code != 200 or len(img.content) < 1000:
+            log.warning("GigaChat файл HTTP %s", img.status_code)
+            return None
+        return img.content
+    except (requests.RequestException, ValueError, KeyError, RuntimeError) as e:
+        log.warning("GigaChat: %s", e)
+        return None
+
+
 # ─────────────── оценка совпадения ───────────────
 def _words(text: str) -> set[str]:
     return {w for w in re.findall(r"[a-z]+", (text or "").lower()) if len(w) > 2}

@@ -159,7 +159,8 @@ def preview_header(ctx: Context, post: dict) -> str:
     t = datetime.fromisoformat(post["time"])
     title = esc(ch.title) if ch else post["channel"]
     hand = "" if post.get("auto", True) else " · ✋ ручное"
-    via = {"ai": "🖼 выбрана ИИ", "tags": "🖼 по тегам", "fallback": "🖼 тематическая (точной не нашлось)"}.get(
+    via = {"ai": "🖼 выбрана ИИ", "tags": "🖼 по тегам", "fallback": "🖼 тематическая (точной не нашлось)",
+           "gen": "🎨 нарисована GigaChat"}.get(
         post.get("image_via"), "")
     via = f" · {via}" if via else ""
     return f"<i>{ch.emoji if ch else ''} {title} · {t:%H:%M} · {esc(post['rubric'])}{hand}{via}</i>\n\n"
@@ -300,7 +301,8 @@ def preview_sample(ctx: Context, arg: str) -> str:
         return f"⚠️ Модель {esc(used_model)} не справилась: {esc(str(e)[:300])}"
     admin = ctx.secrets.admin_chat_id
     pic = {"art": " · картинка YandexART", "pixabay": " · картинка Pixabay", "pexels": " · картинка Pexels",
-           "openverse": " · картинка Openverse", "wikimedia": " · картинка Wikimedia"}.get(post.get("image_from"), " · ⚠️ без картинки")
+           "openverse": " · картинка Openverse", "wikimedia": " · картинка Wikimedia",
+           "gigachat": " · картинка нарисована GigaChat"}.get(post.get("image_from"), " · ⚠️ без картинки")
     head = f"<i>Пробный пост · {esc(ch.title)} · {esc(rubric.name)} · {esc(used_model)}{pic}</i>"
     if post["kind"] == "photo":
         ctx.bot.send_text(admin, head)

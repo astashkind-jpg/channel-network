@@ -119,6 +119,19 @@ def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict
     """Картинка к посту. generate: сначала YandexART; затем бесплатные фотостоки
     (Pixabay → Pexels → Openverse) по запросам ИИ; если точного нет — тематическое фото канала."""
     source = ch.image_source or ctx.network.image_source
+    post["image_prompt"] = gen.get("image_prompt") or post.get("image_prompt") or ""
+    if source == "gigachat" and post["image_prompt"] and ctx.secrets.gigachat_key:
+        data = images.generate_gigachat(post["image_prompt"], ctx.secrets.gigachat_key, dry_run=ctx.dry_run)
+        if data:
+            try:
+                post["media"] = store_media(ctx, "photo", data)
+                post["kind"] = "photo" if visible_len(post["text"]) <= CAPTION_LIMIT else "photo_text"
+                post["image_from"] = "gigachat"
+                post["image_via"] = "gen"
+                post["image_key"] = ""
+                return
+            except Exception as e:
+                log.warning("картинка GigaChat не загрузилась: %s", e)
     if source == "generate" and gen.get("image_prompt"):
         data = images.generate_image(gen["image_prompt"], ctx.secrets.yandex_api_key,
                                      ctx.secrets.yandex_folder_id, ctx.network.art_model,
@@ -288,7 +301,8 @@ def replace_image(ctx: Context, post: dict) -> dict | None:
     history = ctx.state.history(ch.key)
     queries = post.get("image_queries") or []
     exclude = tuple(k for k in [post.get("image_key")] if k)
-    attach_image(ctx, ch, new, {"image_queries": queries}, history, exclude=exclude)
+    attach_image(ctx, ch, new, {"image_queries": queries, "image_prompt": post.get("image_prompt", "")},
+                 history, exclude=exclude)
     ctx.state.save_history(ch.key, history)
     if new["kind"] == "text":
         return None
