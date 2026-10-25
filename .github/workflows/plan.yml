@@ -30,6 +30,11 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
+      - name: Сертификат Минцифры для GigaChat
+        run: |
+          mkdir -p certs
+          [ -s certs/russian_trusted_root_ca.pem ] || curl -sSfL --retry 3 -o certs/russian_trusted_root_ca.pem \
+            https://gu-st.ru/content/lending/russian_trusted_root_ca_pem.crt || echo "сертификат не скачался"
       - name: План и сводка
         run: python -m bot.main plan ${{ inputs.date && format('--date {0}', inputs.date) || '' }} ${{ inputs.force && '--force' || '' }}
         env:
@@ -40,6 +45,7 @@ jobs:
           YANDEX_FOLDER_ID: ${{ secrets.YANDEX_FOLDER_ID }}
           PIXABAY_KEY: ${{ secrets.PIXABAY_KEY }}
           PEXELS_KEY: ${{ secrets.PEXELS_KEY }}
+          GIGACHAT_AUTH_KEY: ${{ secrets.GIGACHAT_AUTH_KEY }}
           TG_API_ID: ${{ secrets.TG_API_ID }}
           TG_API_HASH: ${{ secrets.TG_API_HASH }}
           TG_SESSION: ${{ secrets.TG_SESSION }}
