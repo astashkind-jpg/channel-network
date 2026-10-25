@@ -21,7 +21,8 @@
    "rubric": "Лайфхак",
    "time": "2026-10-26T08:57:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 106
   },
   {
    "kind": "photo",
@@ -38,7 +39,8 @@
    "rubric": "Сезонный уход",
    "time": "2026-10-26T14:26:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 108
   },
   {
    "kind": "photo",
@@ -58,7 +60,8 @@
    "rubric": "Разбор поломки",
    "time": "2026-10-26T20:35:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 110
   }
  ],
  "errors": [],
