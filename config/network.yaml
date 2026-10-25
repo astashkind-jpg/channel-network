@@ -7,9 +7,10 @@ review_hours: 3                 # сколько часов после свод�
 default_model: "deepseek-v4.1-flash"
 
 # Картинки к постам:
-#   free     — бесплатные фото: Pixabay → Pexels → Wikimedia Commons → Openverse;
-#   generate — сначала рисует YandexART (платно), при неудаче — те же фотостоки.
-image_source: "free"
+#   gigachat — рисует Kandinsky через GigaChat (Сбер) точно под сцену поста; при неудаче — фотостоки;
+#   free     — только бесплатные фото: Pixabay → Pexels → Wikimedia Commons → Openverse;
+#   generate — рисует YandexART (платно); при неудаче — фотостоки.
+image_source: "gigachat"
 image_check: true               # ИИ со зрением (Qwen) выбирает фото, где виден предмет поста; копейки за пост
 image_check_model: "qwen3.6-35b-a3b"
 art_model: "yandex-art/latest"
