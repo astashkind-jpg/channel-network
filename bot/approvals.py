@@ -20,6 +20,7 @@ HELP = """🤖 <b>Бот сети каналов</b>
 /pause <i>ключ</i> или /pause all — остановить публикации
 /resume <i>ключ</i> или /resume all — возобновить
 /check — проверка: Yandex AI Studio, фотостоки, права бота в каналах
+/view — показать посты плана на завтра (как кнопка «👀 Посмотреть»)
 /preview <i>ключ</i> — пробный пост канала (не публикуется)
 /preview <i>ключ модель</i> — пробный пост другой моделью, например
 <code>/preview auto qwen3.6-35b-a3b</code>"""
@@ -56,8 +57,14 @@ def process_updates(ctx: Context) -> None:
                 handle_message(ctx, upd["message"])
             elif "channel_post" in upd:
                 handle_channel_post(ctx, upd["channel_post"])
-        except Exception:
+        except Exception as e:
             log.exception("обработка update %s", upd.get("update_id"))
+            try:
+                what = "кнопки" if "callback_query" in upd else "команды"
+                ctx.bot.send_text(ctx.secrets.admin_chat_id,
+                                  f"⚠️ Ошибка при обработке {what}: {esc(type(e).__name__)}: {esc(str(e)[:300])}")
+            except Exception:
+                log.exception("не удалось сообщить об ошибке")
         meta = ctx.state.meta()
 
 
@@ -78,6 +85,8 @@ def handle_callback(ctx: Context, cb: dict) -> None:
     queue = ctx.state.load_queue(date.fromisoformat(day))
     if not queue:
         ctx.bot.answer(cb["id"], "План не найден")
+        ctx.bot.send_text(ctx.secrets.admin_chat_id, f"⚠️ План на {esc(day)} не найден — возможно, он уже "
+                                                     "удалён как устаревший. Новый придёт вечером.")
         return
 
     if action == "A":
@@ -189,10 +198,22 @@ def send_preview(ctx: Context, queue: dict, post: dict) -> None:
         ctx.bot.send_text(admin, f"{header}⚠️ Предпросмотр не отправился: {esc(str(e)[:200])}", buttons)
 
 
-def send_previews(ctx: Context, queue: dict) -> None:
-    for post in queue["posts"]:
-        if post["status"] in ("pending", "approved"):
-            send_preview(ctx, queue, post)
+def send_previews(ctx: Context, queue: dict) -> int:
+    admin = ctx.secrets.admin_chat_id
+    d = date.fromisoformat(queue["date"])
+    shown = [p for p in queue["posts"] if p["status"] in ("pending", "approved")]
+    if not shown:
+        counts: dict[str, int] = {}
+        for p in queue["posts"]:
+            counts[p["status"]] = counts.get(p["status"], 0) + 1
+        summary = ", ".join(f"{STATUS_ICON.get(k, k)} {v}" for k, v in counts.items()) or "постов нет"
+        ctx.bot.send_text(admin, f"👀 На {short_date(d)} нечего показывать — все посты уже обработаны "
+                                 f"({summary}).\nСтатусы: 📤 опубликован, ❌ отклонён, ⌛ сгорел, ⚠️ ошибка.")
+        return 0
+    ctx.bot.send_text(admin, f"👀 <b>Посты на {short_date(d)}: {len(shown)}</b>. Под каждым — кнопки.")
+    for post in shown:
+        send_preview(ctx, queue, post)
+    return len(shown)
 
 
 # --- команды ---
@@ -227,9 +248,31 @@ def handle_message(ctx: Context, msg: dict) -> None:
         ctx.bot.send_text(chat_id, set_pause(ctx, arg, cmd == "/pause"))
     elif cmd == "/preview":
         ctx.bot.send_text(chat_id, preview_sample(ctx, arg))
+    elif cmd == "/view":
+        view_command(ctx, arg)
     elif cmd == "/check":
         from .diagnostics import run_checks
         ctx.bot.send_text(chat_id, run_checks(ctx))
+
+
+def view_command(ctx: Context, arg: str) -> None:
+    """/view — то же, что кнопка «👀 Посмотреть»: посты на завтра (или на указанную дату)."""
+    from datetime import timedelta
+    admin = ctx.secrets.admin_chat_id
+    try:
+        day = date.fromisoformat(arg) if arg else None
+    except ValueError:
+        ctx.bot.send_text(admin, "Формат даты: /view 2026-10-26")
+        return
+    candidates = [day] if day else [now().date() + timedelta(days=1), now().date()]
+    for d in candidates:
+        queue = ctx.state.load_queue(d)
+        if queue:
+            send_previews(ctx, queue)
+            ctx.state.save_queue(queue)
+            return
+    ctx.bot.send_text(admin, "Плана пока нет. Он появляется каждый вечер ~18:40, или запустите "
+                             "Actions → «План на завтра».")
 
 
 def set_pause(ctx: Context, key: str, pause: bool) -> str:
