@@ -123,8 +123,8 @@ channels:
   - key: food
     enabled: true
     title: "Вкусно и полезно"
-    chat_id: ""
-    invite_link: ""
+       chat_id: "-1004485379277"
+       invite_link: "https://t.me/vkusno_i_polezno_nam"
     tagline: "простые рецепты и правильное питание"
     emoji: "🥗"
     cluster: main
