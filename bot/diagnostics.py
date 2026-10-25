@@ -154,12 +154,85 @@ def check_telegram(ctx: Context) -> list[str]:
     return lines
 
 
+def check_video(ctx: Context) -> list[str]:
+    """Аккаунт для репоста видео (Telethon) и каналы-источники: доступны ли и сколько свежих видео."""
+    sec = ctx.secrets
+    with_video = [c for c in ctx.channels if c.ready and any(r.type == "video" for r in c.rubrics)]
+    missing = [n for n, v in (("TG_API_ID", sec.tg_api_id), ("TG_API_HASH", sec.tg_api_hash),
+                              ("TG_SESSION", sec.tg_session)) if not v]
+    if len(missing) == 3:
+        return [f"{OFF} Видео выключено: нет секретов TG_API_ID, TG_API_HASH, TG_SESSION — "
+                "видео-рубрики заменяются текстовыми постами"]
+    if missing:
+        return [f"{FAIL} Видео: не хватает секретов {', '.join(missing)}"]
+    if not sec.tg_api_id.strip().isdigit():
+        return [f"{FAIL} Видео: TG_API_ID должен быть числом (App api_id с my.telegram.org)"]
+    import asyncio
+    try:
+        return asyncio.run(_check_video(ctx, with_video))
+    except Exception as e:
+        hint = ""
+        low = str(e).lower()
+        if "auth" in low or "session" in low or "unauthorized" in low:
+            hint = "\n    Сессия недействительна: получите TG_SESSION заново (scripts/make_session.py)."
+        elif "api_id" in low or "api_hash" in low:
+            hint = "\n    Проверьте TG_API_ID и TG_API_HASH — они должны быть от того же аккаунта."
+        return [f"{FAIL} Видео: {_short(e)}{hint}"]
+
+
+async def _check_video(ctx: Context, channels) -> list[str]:
+    from datetime import datetime, timedelta, timezone
+    from telethon import TelegramClient
+    from telethon.sessions import StringSession
+    from .reposter import _is_ad
+
+    net, sec = ctx.network, ctx.secrets
+    since = datetime.now(timezone.utc) - timedelta(days=net.video_max_age_days)
+    max_bytes = net.video_max_mb * 1024 * 1024
+    lines = []
+    async with TelegramClient(StringSession(sec.tg_session), int(sec.tg_api_id), sec.tg_api_hash) as client:
+        if not await client.is_user_authorized():
+            return [f"{FAIL} Видео: сессия не авторизована — получите TG_SESSION заново"]
+        me = await client.get_me()
+        name = f"@{me.username}" if me.username else (me.first_name or "без имени")
+        lines.append(f"{OK} Аккаунт для видео: {esc(name)}")
+        for ch in channels:
+            if not ch.video_sources:
+                lines.append(f"{OFF} {ch.emoji} {esc(ch.title)}: источники не заданы (video_sources) — "
+                             "вместо видео выходят текстовые посты")
+                continue
+            for src in ch.video_sources:
+                try:
+                    fresh = good = 0
+                    async for m in client.iter_messages(src, limit=80):
+                        if m.date < since:
+                            break
+                        if not m.video or m.video_note or not m.file:
+                            continue
+                        fresh += 1
+                        if (m.file.size or 0) <= max_bytes and not _is_ad(m.message or "", net.ad_markers):
+                            good += 1
+                except Exception as e:
+                    lines.append(f"{FAIL} {ch.emoji} {esc(src)}: недоступен — {_short(e)}")
+                    continue
+                days = net.video_max_age_days
+                if good:
+                    lines.append(f"{OK} {ch.emoji} {esc(src)}: подходящих видео за {days} дн. — {good}"
+                                 + (f" (всего {fresh})" if fresh != good else ""))
+                else:
+                    lines.append(f"{WARN} {ch.emoji} {esc(src)}: за {days} дн. подходящих видео нет"
+                                 + (f" (было {fresh}: большие или с рекламой)" if fresh else "")
+                                 + " — замените источник")
+    return lines
+
+
 def run_checks(ctx: Context) -> str:
     sections = [
         ("🤖 Telegram", check_telegram),
         ("🧠 Yandex AI Studio", lambda c: check_text_models(c) + check_vision(c) + check_art(c)),
         ("🎨 GigaChat", check_gigachat),
         ("🖼 Фотостоки", check_stocks),
+        ("🎬 Видео", check_video),
     ]
     out = ["🩺 <b>Проверка бота</b>"]
     fails = 0
