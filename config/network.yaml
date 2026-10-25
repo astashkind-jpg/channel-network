@@ -15,6 +15,7 @@ fallback_models: ["qwen3.6-35b-a3b", "aliceai-llm"]
 image_source: "gigachat"
 image_check: true               # ИИ со зрением (Qwen) выбирает фото, где виден предмет поста; копейки за пост
 image_check_model: "qwen3.6-35b-a3b"
+gen_attempts: 2                 # GigaChat перерисует картинку, если ИИ найдёт несоответствие посту
 art_model: "yandex-art/latest"
 image_aspect: "16:9"            # пропорции сгенерированной картинки
 
