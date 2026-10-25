@@ -116,38 +116,61 @@ def giga_token(auth_key: str, scope: str = "GIGACHAT_API_PERS") -> str:
     return data["access_token"]
 
 
-def generate_gigachat(prompt: str, auth_key: str, model: str = "GigaChat",
+GIGA_MODELS = ("GigaChat-2-Max", "GigaChat-2-Pro", "GigaChat-2", "GigaChat")
+giga_last_error = ""  # причина последней неудачи — показывается в /check
+
+
+def _giga_fail(msg: str) -> None:
+    global giga_last_error
+    giga_last_error = msg
+    log.warning("GigaChat: %s", msg)
+
+
+def generate_gigachat(prompt: str, auth_key: str, models: tuple = GIGA_MODELS,
                       dry_run: bool = False) -> bytes | None:
-    """Kandinsky через GigaChat API: модель сама вызывает функцию рисования. Возвращает JPEG."""
+    """Kandinsky через GigaChat API: модель сама вызывает функцию рисования. Возвращает JPEG.
+    Пробует модели по очереди — рисование может быть доступно не во всех."""
+    global giga_last_error
     if not prompt or not auth_key or dry_run:
         return None
     try:
         token = giga_token(auth_key)
-        headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
-        resp = requests.post(f"{GIGA_API_URL}/chat/completions", headers=headers, timeout=180,
-                             verify=giga_ca(), json={
-            "model": model, "function_call": "auto",
-            "messages": [
-                {"role": "system", "content": "Ты — фотограф. Рисуешь фотореалистичные снимки: естественный "
-                                              "свет, реальные предметы, без текста, надписей и логотипов."},
-                {"role": "user", "content": f"Нарисуй фотореалистичное фото, горизонтальное: {prompt.strip()}"}]})
-        if resp.status_code != 200:
-            log.warning("GigaChat HTTP %s: %s", resp.status_code, resp.text[:300])
-            return None
-        content = resp.json()["choices"][0]["message"].get("content") or ""
-        m = re.search(r'<img[^>]+src="([^"]+)"', content)
-        if not m:
-            log.warning("GigaChat не нарисовал картинку: %s", content[:200])
-            return None
-        img = requests.get(f"{GIGA_API_URL}/files/{m.group(1)}/content", timeout=60, verify=giga_ca(),
-                           headers={"Authorization": f"Bearer {token}", "Accept": "application/jpg"})
-        if img.status_code != 200 or len(img.content) < 1000:
-            log.warning("GigaChat файл HTTP %s", img.status_code)
-            return None
-        return img.content
     except (requests.RequestException, ValueError, KeyError, RuntimeError) as e:
-        log.warning("GigaChat: %s", e)
+        _giga_fail(f"авторизация: {e}")
         return None
+    headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+    reasons = []
+    for model in models:
+        try:
+            resp = requests.post(f"{GIGA_API_URL}/chat/completions", headers=headers, timeout=180,
+                                 verify=giga_ca(), json={
+                "model": model, "function_call": "auto",
+                "messages": [
+                    {"role": "system", "content": "Ты — фотограф. Рисуешь фотореалистичные снимки: естественный "
+                                                  "свет, реальные предметы, без текста, надписей и логотипов."},
+                    {"role": "user", "content": f"Нарисуй фотореалистичное фото, горизонтальное: {prompt.strip()}"}]})
+            if resp.status_code != 200:
+                reasons.append(f"{model}: HTTP {resp.status_code} {resp.text[:120]}")
+                if resp.status_code in (401, 402, 403):
+                    break  # нет прав / закончились токены — другие модели не помогут
+                continue
+            content = resp.json()["choices"][0]["message"].get("content") or ""
+            m = re.search(r'<img[^>]+src="([^"]+)"', content)
+            if not m:
+                reasons.append(f"{model}: ответил текстом вместо картинки: «{content[:100]}»")
+                continue
+            img = requests.get(f"{GIGA_API_URL}/files/{m.group(1)}/content", timeout=60, verify=giga_ca(),
+                               headers={"Authorization": f"Bearer {token}", "Accept": "application/jpg"})
+            if img.status_code != 200 or len(img.content) < 1000:
+                reasons.append(f"{model}: файл не скачался, HTTP {img.status_code}")
+                continue
+            giga_last_error = ""
+            log.info("GigaChat нарисовал картинку моделью %s", model)
+            return img.content
+        except (requests.RequestException, ValueError, KeyError) as e:
+            reasons.append(f"{model}: {e}")
+    _giga_fail("; ".join(reasons)[:600] or "нет ответа")
+    return None
 
 
 # ─────────────── оценка совпадения ───────────────

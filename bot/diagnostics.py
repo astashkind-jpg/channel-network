@@ -74,8 +74,8 @@ def check_gigachat(ctx: Context) -> list[str]:
         "автомобиль вечером на парковке, у него горит только одна передняя фара", ctx.secrets.gigachat_key))
     if data:
         return [f"{OK} GigaChat рисует картинки ({len(data) // 1024} КБ, {sec:.0f} с)"]
-    return [f"{FAIL} GigaChat: авторизация есть, но картинка не нарисовалась — см. лог Actions "
-            f"(возможно, генерация не входит в ваш пакет)"]
+    return [f"{FAIL} GigaChat: авторизация есть, но картинка не нарисовалась.\n"
+            f"    Причина: {esc(images.giga_last_error or 'неизвестна')}"]
 
 
 def check_art(ctx: Context) -> list[str]:
