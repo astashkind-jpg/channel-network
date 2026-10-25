@@ -16,7 +16,7 @@ from .images import Candidate, _words
 log = logging.getLogger(__name__)
 
 PIXABAY_VIDEO_URL = "https://pixabay.com/api/videos/"
-UA = {"User-Agent": "channel-network-bot/1.0"}
+from .images import BROWSER_UA as UA
 
 
 def _pick_file(videos: dict, max_bytes: int) -> dict | None:

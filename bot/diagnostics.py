@@ -43,18 +43,25 @@ def check_vision(ctx: Context) -> list[str]:
     model = ctx.network.image_check_model
     if not ctx.network.image_check:
         return [f"{OFF} Проверка картинок ИИ выключена (image_check: false)"]
-    cands = images.search_pixabay("car engine", ctx.secrets.pixabay_key)[:1] or \
-        images.search_wikimedia("car engine")[:1]
-    if not cands:
+    tries = [("Pixabay", lambda: images.search_pixabay("car engine", ctx.secrets.pixabay_key)[:1]),
+             ("Wikimedia", lambda: images.search_wikimedia("car engine")[:1])]
+    errors = []
+    for src, find in tries:
+        cands = find()
+        if not cands:
+            continue
+        try:
+            n, sec = _timed(lambda: ctx.ai.pick_image("двигатель автомобиля",
+                                                       "Пост про подкапотное пространство автомобиля.", cands))
+            verdict = "фото подходит" if n == 0 else "фото не подходит"
+            note = "" if src == "Pixabay" else f" (фото {src}; с Pixabay: {esc(errors[-1]) if errors else '—'})"
+            return [f"{OK} Проверка картинок ИИ <code>{esc(model)}</code>: работает ({verdict}), {sec:.1f} с{note}"]
+        except Exception as e:
+            errors.append(_short(e))
+    if not errors:
         return [f"{WARN} Проверка картинок ИИ <code>{esc(model)}</code>: не нашлось фото для теста"]
-    try:
-        n, sec = _timed(lambda: ctx.ai.pick_image("двигатель автомобиля",
-                                                   "Пост про подкапотное пространство автомобиля.", cands))
-        verdict = "фото подходит" if n == 0 else "фото не подходит"
-        return [f"{OK} Проверка картинок ИИ <code>{esc(model)}</code>: работает ({verdict}), {sec:.1f} с"]
-    except Exception as e:
-        return [f"{FAIL} Проверка картинок ИИ <code>{esc(model)}</code>: {_short(e)}\n"
-                f"    Бот продолжит работать: фото будут выбираться только по тегам."]
+    return [f"{FAIL} Проверка картинок ИИ <code>{esc(model)}</code>: {errors[-1]}\n"
+            f"    Бот продолжит работать: фото будут выбираться только по тегам."]
 
 
 def check_gigachat(ctx: Context) -> list[str]:

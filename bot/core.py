@@ -85,7 +85,7 @@ def download_image(url: str) -> bytes | None:
     if not url.startswith("http"):
         return None
     try:
-        r = requests.get(url, timeout=30, headers={"User-Agent": "channel-network-bot/1.0"})
+        r = requests.get(url, timeout=30, headers=images.fetch_headers(url))
         r.raise_for_status()
         if not r.headers.get("Content-Type", "").startswith("image/") or len(r.content) > 9_000_000:
             return None

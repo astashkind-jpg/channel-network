@@ -27,6 +27,14 @@ WIKIMEDIA_URL = "https://commons.wikimedia.org/w/api.php"
 ART_URL = "https://llm.api.cloud.yandex.net/foundationModels/v1/imageGenerationAsync"
 OPERATION_URL = "https://llm.api.cloud.yandex.net:443/operations/{}"
 UA = {"User-Agent": "channel-network-bot/1.0 (Telegram channels; contact via GitHub)"}
+# CDN фотостоков (Pixabay) иногда отказывают «ботам» — для скачивания файлов представляемся браузером;
+# Wikimedia, наоборот, просит описательный User-Agent
+BROWSER_UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                            "Chrome/128.0 Safari/537.36", "Accept": "image/avif,image/webp,image/*,*/*;q=0.8"}
+
+
+def fetch_headers(url: str) -> dict:
+    return UA if "wikimedia.org" in (url or "") else BROWSER_UA
 # лицензии Wikimedia/Openverse, которые разрешают коммерческое использование
 FREE_LICENSES = ("public domain", "pd", "cc0", "cc by", "cc-by", "by", "by-sa")
 

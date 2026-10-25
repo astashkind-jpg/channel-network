@@ -179,24 +179,32 @@ class AI:
             "Хорошее качество и отсутствие надписей/водяных знаков — плюс. Ответь только числом — номером фото. "
             "Если ни одно не показывает главную сцену поста, ответь 0.")}]
         shown = 0
+        last_err = ""
+        from .images import fetch_headers
         for c in candidates:
-            try:
-                r = requests.get(c.preview or c.url, timeout=20,
-                                 headers={"User-Agent": "channel-network-bot/1.0"})
-                r.raise_for_status()
-                if len(r.content) > 3_000_000:
-                    raise ValueError("слишком большой файл")
-                b64 = base64.b64encode(r.content).decode()
-                mime = r.headers.get("Content-Type", "image/jpeg").split(";")[0]
-            except (requests.RequestException, ValueError):
-                b64, mime = "", ""
+            b64, mime = "", ""
+            for url in dict.fromkeys(u for u in (c.preview, c.url) if u):  # сначала уменьшенная копия
+                try:
+                    r = requests.get(url, timeout=20, headers=fetch_headers(url))
+                    r.raise_for_status()
+                    if len(r.content) > 3_000_000:
+                        raise ValueError("слишком большой файл")
+                    mime = r.headers.get("Content-Type", "image/jpeg").split(";")[0]
+                    if not mime.startswith("image/"):
+                        raise ValueError(f"не картинка: {mime}")
+                    b64 = base64.b64encode(r.content).decode()
+                    break
+                except (requests.RequestException, ValueError) as e:
+                    log.warning("фото для проверки не скачалось (%s): %s", url[:80], e)
+                    last_err = str(e)[:150]
+                    b64, mime = "", ""
             if not b64:  # фото не скачалось — показываем заглушку, чтобы номера не съехали
                 parts.append({"type": "text", "text": f"Фото {len(parts)}: (не загрузилось)"})
                 continue
             parts.append({"type": "image_url", "image_url": {"url": f"data:{mime};base64,{b64}"}})
             shown += 1
         if not shown:
-            raise AIError("ни одно фото не скачалось для проверки")
+            raise AIError(f"ни одно фото не скачалось для проверки ({last_err or 'причина неизвестна'})")
         resp = requests.post(
             YANDEX_CHAT_URL,
             headers={"Authorization": f"Bearer {self.s.yandex_api_key}",
