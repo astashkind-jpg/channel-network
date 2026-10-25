@@ -58,6 +58,7 @@ class Network:
     image_aspect: str = "16:9"
     image_check: bool = True            # ИИ со зрением выбирает фото, где виден предмет поста
     image_check_model: str = "qwen3.6-35b-a3b"
+    gen_attempts: int = 2               # сколько раз GigaChat перерисовывает, если ИИ забраковал картинку
     catalog_weekday: int = 6
     catalog_window: str = "12:00-13:00"
     promo_per_channel_per_day: int = 1

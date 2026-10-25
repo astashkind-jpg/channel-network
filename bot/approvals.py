@@ -169,9 +169,12 @@ def preview_header(ctx: Context, post: dict) -> str:
     title = esc(ch.title) if ch else post["channel"]
     hand = "" if post.get("auto", True) else " · ✋ ручное"
     via = {"ai": "🖼 выбрана ИИ", "tags": "🖼 по тегам", "fallback": "🖼 тематическая (точной не нашлось)",
-           "gen": "🎨 нарисована GigaChat"}.get(
+           "gen": "🎨 нарисована GigaChat, проверена ИИ",
+           "gen_warn": "⚠️ нарисована GigaChat, ИИ сомневается — проверьте"}.get(
         post.get("image_via"), "")
     via = f" · {via}" if via else ""
+    if post.get("image_via") == "gen_warn" and post.get("image_notes"):
+        via += f"\nЗамечание ИИ к картинке: {esc(post['image_notes'][-1][:200])}"
     return f"<i>{ch.emoji if ch else ''} {title} · {t:%H:%M} · {esc(post['rubric'])}{hand}{via}</i>\n\n"
 
 

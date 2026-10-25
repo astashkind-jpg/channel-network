@@ -114,24 +114,58 @@ def build_text_post(ctx: Context, ch: Channel, rubric: Rubric, day: date, histor
     return post
 
 
+def generate_checked(ctx: Context, post: dict) -> tuple[bytes | None, bytes | None]:
+    """GigaChat рисует, ИИ со зрением проверяет. Не подошло — перерисовка с уточнением.
+    Возвращает (проверенная картинка, последняя непроверенная)."""
+    prompt = post["image_prompt"]
+    last = None
+    attempts = max(1, ctx.network.gen_attempts)
+    for attempt in range(attempts):
+        data = images.generate_gigachat(prompt, ctx.secrets.gigachat_key, dry_run=ctx.dry_run)
+        if not data:
+            break
+        last = data
+        if not ctx.network.image_check:
+            return data, None
+        try:
+            ok, fix = ctx.ai.check_generated(post.get("topic", ""), post["text"], post["image_prompt"], data)
+        except Exception as e:  # проверка не сработала — не блокируем пост
+            log.warning("проверка нарисованной картинки: %s", e)
+            return data, None
+        if ok:
+            log.info("картинка GigaChat прошла проверку с попытки %d", attempt + 1)
+            return data, None
+        log.info("картинка GigaChat не подошла (%s), перерисовываю", fix)
+        post.setdefault("image_notes", []).append(fix)
+        if fix:
+            prompt = f"{post['image_prompt']} Обязательно: {fix}"
+    return None, last
+
+
+def use_generated(ctx: Context, post: dict, data: bytes, via: str) -> bool:
+    try:
+        post["media"] = store_media(ctx, "photo", data)
+    except Exception as e:
+        log.warning("картинка GigaChat не загрузилась: %s", e)
+        return False
+    post["kind"] = "photo" if visible_len(post["text"]) <= CAPTION_LIMIT else "photo_text"
+    post["image_from"] = "gigachat"
+    post["image_via"] = via
+    post["image_key"] = ""
+    return True
+
+
 def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict,
                  exclude: tuple = ()) -> None:
     """Картинка к посту. generate: сначала YandexART; затем бесплатные фотостоки
     (Pixabay → Pexels → Openverse) по запросам ИИ; если точного нет — тематическое фото канала."""
     source = ch.image_source or ctx.network.image_source
     post["image_prompt"] = gen.get("image_prompt") or post.get("image_prompt") or ""
+    unchecked = None  # нарисованная картинка, не прошедшая проверку — на крайний случай
     if source == "gigachat" and post["image_prompt"] and ctx.secrets.gigachat_key:
-        data = images.generate_gigachat(post["image_prompt"], ctx.secrets.gigachat_key, dry_run=ctx.dry_run)
-        if data:
-            try:
-                post["media"] = store_media(ctx, "photo", data)
-                post["kind"] = "photo" if visible_len(post["text"]) <= CAPTION_LIMIT else "photo_text"
-                post["image_from"] = "gigachat"
-                post["image_via"] = "gen"
-                post["image_key"] = ""
-                return
-            except Exception as e:
-                log.warning("картинка GigaChat не загрузилась: %s", e)
+        good, unchecked = generate_checked(ctx, post)
+        if good and use_generated(ctx, post, good, "gen"):
+            return
     if source == "generate" and gen.get("image_prompt"):
         data = images.generate_image(gen["image_prompt"], ctx.secrets.yandex_api_key,
                                      ctx.secrets.yandex_folder_id, ctx.network.art_model,
@@ -154,6 +188,10 @@ def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict
         queries, ch.image_fallback, ctx.secrets.pixabay_key, ctx.secrets.pexels_key,
         history["images"] + list(exclude), ctx.rng, category=ch.image_category, dry_run=ctx.dry_run,
         judge=judge)
+    if unchecked and not any(c.via == "ai" for c in candidates[:1]):
+        # фотостоки не нашли проверенного фото — лучше нарисованная, хоть и с замечаниями
+        if use_generated(ctx, post, unchecked, "gen_warn"):
+            return
     for cand in candidates:
         try:
             post["media"] = store_media(ctx, "photo", download_image(cand.url) or cand.url)
