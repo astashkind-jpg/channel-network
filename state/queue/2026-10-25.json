@@ -23,10 +23,12 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-10-25T13:45:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "preview_message_id": 51,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-25T13:49:23.359957+03:00",
+   "message_id": 6
   }
  ],
  "errors": [
