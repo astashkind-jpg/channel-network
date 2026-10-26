@@ -17,8 +17,7 @@ KIND_NAMES = {"photo": "фото", "photo_text": "фото", "video": "виде�
 def plan_day(ctx: Context, day: date, force: bool = False) -> dict:
     existing = ctx.state.load_queue(day)
     if existing and not force:
-        log.info("план на %s уже есть — пропускаю (используйте --force)", day)
-        return existing
+        return complete_plan(ctx, existing, day)
 
     import time
     posts: list[dict] = []
@@ -56,6 +55,47 @@ def plan_day(ctx: Context, day: date, force: bool = False) -> dict:
         "digest_message_id": None,
     }
     ctx.state.save_queue(queue)
+    send_digest(ctx, queue)
+    ctx.state.save_queue(queue)
+    return queue
+
+
+def complete_plan(ctx: Context, queue: dict, day: date) -> dict:
+    """План уже есть. Если с тех пор подключили новые каналы — достраиваем посты только для них,
+    остальные посты (и ваши ✅/❌) не трогаем."""
+    import time
+    planned = {p["channel"] for p in queue["posts"] if p.get("rubric") != "Каталог сети"}
+    missing = [c for c in ctx.ready_channels() if c.key not in planned]
+    if not missing:
+        log.info("план на %s уже есть и все каналы в нём — пропускаю (используйте --force)", day)
+        return queue
+    log.info("план на %s есть, достраиваю каналы: %s", day, ", ".join(c.key for c in missing))
+    new: list[dict] = []
+    errors: list[str] = []
+    ctx.plan_started = time.time()
+    for ch in missing:
+        try:
+            new += plan_channel(ctx, ch, day, errors)
+        except Exception as e:
+            log.exception("канал %s", ch.key)
+            errors.append(f"{ch.title}: {str(e)[:200]}")
+        record_members(ctx, ch)
+    ctx.plan_started = None
+    add_promo(ctx, new)
+    for p in new:
+        if p["kind"] == "text":
+            ch = ctx.channel(p["channel"])
+            errors.append(f"{ch.title if ch else p['channel']}, {p['rubric']}: без картинки — нажмите 🔄 Заменить")
+    queue["posts"] = sorted(queue["posts"] + new, key=lambda p: p["time"])
+    queue["errors"] = list(queue.get("errors") or []) + errors
+    # новым постам — те же 3 часа на просмотр (уже утверждённые посты это не задерживает)
+    queue["deadline"] = max(queue["deadline"],
+                            (now() + timedelta(hours=ctx.network.review_hours)).isoformat())
+    ctx.state.save_queue(queue)
+    if ctx.secrets.admin_chat_id:
+        names = ", ".join(f"{c.emoji} {esc(c.title)}" for c in missing)
+        ctx.bot.send_text(ctx.secrets.admin_chat_id,
+                          f"➕ В план на {human_date(day)} добавлены новые каналы: {names} — постов: {len(new)}.")
     send_digest(ctx, queue)
     ctx.state.save_queue(queue)
     return queue
