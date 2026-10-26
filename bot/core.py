@@ -129,6 +129,10 @@ def generate_checked(ctx: Context, post: dict) -> tuple[bytes | None, bytes | No
     """GigaChat рисует, ИИ со зрением проверяет. Не подошло — перерисовка с уточнением.
     Возвращает (проверенная картинка, последняя непроверенная)."""
     prompt = post["image_prompt"]
+    subject = post.get("real_subject") or ""
+    if subject and subject.lower() not in prompt.lower():
+        prompt = f"{prompt} Главный объект: {subject} — нарисуй узнаваемо именно его."
+    base = prompt
     last = None
     attempts = max(1, ctx.network.gen_attempts)
     for attempt in range(attempts):
@@ -139,7 +143,9 @@ def generate_checked(ctx: Context, post: dict) -> tuple[bytes | None, bytes | No
         if not ctx.network.image_check:
             return data, None
         try:
-            ok, fix = ctx.ai.check_generated(post.get("topic", ""), post["text"], post["image_prompt"], data)
+            args = (post.get("topic", ""), post["text"], post["image_prompt"], data)
+            ok, fix = (ctx.ai.check_generated(*args, subject=subject) if subject
+                       else ctx.ai.check_generated(*args))
         except Exception as e:  # проверка не сработала — не блокируем пост
             log.warning("проверка нарисованной картинки: %s", e)
             return data, None
@@ -149,7 +155,7 @@ def generate_checked(ctx: Context, post: dict) -> tuple[bytes | None, bytes | No
         log.info("картинка GigaChat не подошла (%s), перерисовываю", fix)
         post.setdefault("image_notes", []).append(fix)
         if fix:
-            prompt = f"{post['image_prompt']} Обязательно: {fix}"
+            prompt = f"{base} Обязательно: {fix}"
     return None, last
 
 
@@ -166,16 +172,63 @@ def use_generated(ctx: Context, post: dict, data: bytes, via: str) -> bool:
     return True
 
 
+def use_candidate(ctx: Context, post: dict, cand, history: dict) -> bool:
+    try:
+        post["media"] = store_media(ctx, "photo", download_image(cand.url) or cand.url)
+    except Exception as e:  # картинка недоступна — пробуем следующую
+        log.warning("картинка не загрузилась (%s): %s", cand.url, e)
+        return False
+    post["image_from"] = cand.key.split(":", 1)[0]
+    post["image_key"] = cand.key
+    post["image_via"] = cand.via
+    post["image_credit"] = cand.credit
+    history["images"].append(cand.key)
+    if cand.credit:
+        post["text"] += f"\n\n{cand.credit}"
+    # если подпись всё же длиннее лимита — фото и текст уйдут двумя сообщениями
+    post["kind"] = "photo" if visible_len(post["text"]) <= CAPTION_LIMIT else "photo_text"
+    return True
+
+
 def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict,
                  exclude: tuple = ()) -> None:
-    """Картинка к посту. generate: сначала YandexART; затем бесплатные фотостоки
-    (Pixabay → Pexels → Openverse) по запросам ИИ; если точного нет — тематическое фото канала."""
+    """Картинка к посту.
+    Обычный пост: GigaChat рисует атмосферную иллюстрацию (проверка ИИ) → фотостоки → тематическое фото.
+    Пост про конкретный реальный объект (вид животного, место, модель машины — real_subject): сначала
+    НАСТОЯЩЕЕ фото со стоков и Wikimedia, которое ИИ со зрением признал именно этим объектом; не нашлось —
+    GigaChat с проверкой, что нарисован именно он; дальше — как обычно."""
     source = ch.image_source or ctx.network.image_source
     post["image_prompt"] = gen.get("image_prompt") or post.get("image_prompt") or ""
-    unchecked = None  # нарисованная картинка, не прошедшая проверку — на крайний случай
+    subject = gen.get("real_subject") or post.get("real_subject") or ""
+    if subject:
+        post["real_subject"] = subject
     level = ctx.plan_level()
     if level and source == "gigachat":
         post["image_rushed"] = True
+    queries = gen.get("image_queries") or ([gen["image_query"]] if gen.get("image_query") else [])
+    if subject:
+        queries = [subject] + [q for q in queries if q.lower() != subject.lower()]
+    post["image_queries"] = queries
+    judge = None
+    if ctx.network.image_check and not ctx.dry_run and level < 2:
+        topic, plain = post.get("topic", ""), post["text"]
+        if subject:
+            judge = lambda cands: ctx.ai.pick_image(topic, plain, cands, subject=subject)
+        else:
+            judge = lambda cands: ctx.ai.pick_image(topic, plain, cands)
+
+    def stock_candidates():
+        return images.find_candidates(
+            queries, ch.image_fallback, ctx.secrets.pixabay_key, ctx.secrets.pexels_key,
+            history["images"] + list(exclude), ctx.rng, category=ch.image_category, dry_run=ctx.dry_run,
+            judge=judge)
+
+    candidates = None
+    if subject:  # настоящее фото важнее рисунка
+        candidates = stock_candidates()
+        if candidates and candidates[0].via == "ai" and use_candidate(ctx, post, candidates[0], history):
+            return
+    unchecked = None  # нарисованная картинка, не прошедшая проверку — на крайний случай
     if source == "gigachat" and post["image_prompt"] and ctx.secrets.gigachat_key and level == 0:
         good, unchecked = generate_checked(ctx, post)
         if good and use_generated(ctx, post, good, "gen"):
@@ -192,35 +245,17 @@ def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict
                 return
             except Exception as e:
                 log.warning("сгенерированная картинка не загрузилась: %s", e)
-    queries = gen.get("image_queries") or ([gen["image_query"]] if gen.get("image_query") else [])
-    judge = None
-    if ctx.network.image_check and not ctx.dry_run and level < 2:
-        topic, plain = post.get("topic", ""), post["text"]
-        judge = lambda cands: ctx.ai.pick_image(topic, plain, cands)
-    post["image_queries"] = queries
-    candidates = images.find_candidates(
-        queries, ch.image_fallback, ctx.secrets.pixabay_key, ctx.secrets.pexels_key,
-        history["images"] + list(exclude), ctx.rng, category=ch.image_category, dry_run=ctx.dry_run,
-        judge=judge)
-    if unchecked and not any(c.via == "ai" for c in candidates[:1]):
+    if candidates is None:
+        candidates = stock_candidates()
+    if unchecked and not any(c.via == "ai" for c in candidates[:1]) and not subject:
         # фотостоки не нашли проверенного фото — лучше нарисованная, хоть и с замечаниями
+        # (для конкретного объекта сомнительный рисунок хуже: там скорее нарисован не он)
         if use_generated(ctx, post, unchecked, "gen_warn"):
             return
     for cand in candidates:
-        try:
-            post["media"] = store_media(ctx, "photo", download_image(cand.url) or cand.url)
-        except Exception as e:  # картинка недоступна — пробуем следующую
-            log.warning("картинка не загрузилась (%s): %s", cand.url, e)
-            continue
-        post["image_from"] = cand.key.split(":", 1)[0]
-        post["image_key"] = cand.key
-        post["image_via"] = cand.via
-        post["image_credit"] = cand.credit
-        history["images"].append(cand.key)
-        if cand.credit:
-            post["text"] += f"\n\n{cand.credit}"
-        # если подпись всё же длиннее лимита — фото и текст уйдут двумя сообщениями
-        post["kind"] = "photo" if visible_len(post["text"]) <= CAPTION_LIMIT else "photo_text"
+        if use_candidate(ctx, post, cand, history):
+            return
+    if unchecked and use_generated(ctx, post, unchecked, "gen_warn"):
         return
     log.warning("пост %s остался без картинки: ни один фотосток не ответил", ch.key)
 
@@ -457,7 +492,9 @@ def replace_image(ctx: Context, post: dict) -> dict | None:
     history = ctx.state.history(ch.key)
     queries = post.get("image_queries") or []
     exclude = tuple(k for k in [post.get("image_key")] if k)
-    attach_image(ctx, ch, new, {"image_queries": queries, "image_prompt": post.get("image_prompt", "")},
+    attach_image(ctx, ch, new, {"image_queries": [q for q in queries if q != post.get("real_subject")],
+                                "image_prompt": post.get("image_prompt", ""),
+                                "real_subject": post.get("real_subject", "")},
                  history, exclude=exclude)
     ctx.state.save_history(ch.key, history)
     if new["kind"] == "text":
