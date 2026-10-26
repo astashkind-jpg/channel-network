@@ -18,7 +18,8 @@
    "rubric": "Доброе утро",
    "time": "2026-10-27T06:51:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 200
   },
   {
    "kind": "photo",
@@ -35,7 +36,8 @@
    "rubric": "Рецепт дня",
    "time": "2026-10-27T08:31:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 202
   },
   {
    "kind": "video",
@@ -56,7 +58,8 @@
    "rubric": "Видео",
    "time": "2026-10-27T08:35:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 204
   },
   {
    "kind": "photo",
@@ -76,7 +79,8 @@
    "rubric": "Хитрость мастера",
    "time": "2026-10-27T08:50:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 206
   },
   {
    "kind": "video",
@@ -97,7 +101,8 @@
    "rubric": "Видео",
    "time": "2026-10-27T10:01:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 208
   },
   {
    "kind": "photo",
@@ -114,7 +119,8 @@
    "rubric": "Миф или правда",
    "time": "2026-10-27T10:19:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 210
   },
   {
    "kind": "photo",
@@ -142,7 +148,8 @@
    "rubric": "Полезная замена",
    "time": "2026-10-27T11:46:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 212
   },
   {
    "kind": "photo",
@@ -159,7 +166,8 @@
    "rubric": "Вещь из прошлого",
    "time": "2026-10-27T11:52:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 214
   },
   {
    "kind": "photo",
@@ -176,7 +184,8 @@
    "rubric": "Повод дня",
    "time": "2026-10-27T12:46:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 216
   },
   {
    "kind": "photo",
@@ -193,7 +202,8 @@
    "rubric": "Анекдот для взрослых",
    "time": "2026-10-27T12:57:00+03:00",
    "status": "pending",
-   "auto": false
+   "auto": false,
+   "preview_message_id": 218
   },
   {
    "kind": "photo",
@@ -210,7 +220,8 @@
    "rubric": "Лайфхак",
    "time": "2026-10-27T13:18:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 220
   },
   {
    "kind": "photo",
@@ -230,7 +241,8 @@
    "rubric": "Ошибка ремонта",
    "time": "2026-10-27T13:48:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 222
   },
   {
    "kind": "photo",
@@ -247,7 +259,8 @@
    "rubric": "Психология пары",
    "time": "2026-10-27T15:44:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 224
   },
   {
    "kind": "photo",
@@ -264,7 +277,8 @@
    "rubric": "Удивительное животное",
    "time": "2026-10-27T16:00:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 226
   },
   {
    "kind": "photo",
@@ -281,7 +295,8 @@
    "rubric": "Как жили в СССР",
    "time": "2026-10-27T17:48:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 228
   },
   {
    "kind": "photo",
@@ -298,7 +313,8 @@
    "rubric": "Рецепт дня",
    "time": "2026-10-27T17:54:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 230
   },
   {
    "kind": "photo",
@@ -317,7 +333,8 @@
    "rubric": "Анекдот для взрослых",
    "time": "2026-10-27T19:22:00+03:00",
    "status": "pending",
-   "auto": false
+   "auto": false,
+   "preview_message_id": 232
   },
   {
    "kind": "photo",
@@ -334,7 +351,8 @@
    "rubric": "Хитрость мастера",
    "time": "2026-10-27T20:07:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 234
   },
   {
    "kind": "photo",
@@ -351,7 +369,8 @@
    "rubric": "Чудо природы",
    "time": "2026-10-27T20:24:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 236
   },
   {
    "kind": "photo",
@@ -368,7 +387,8 @@
    "rubric": "Разбор поломки",
    "time": "2026-10-27T20:42:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 238
   },
   {
    "kind": "photo",
@@ -385,7 +405,8 @@
    "rubric": "Частый вопрос",
    "time": "2026-10-27T21:06:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 240
   },
   {
    "kind": "photo",
@@ -402,7 +423,8 @@
    "rubric": "Вещь из прошлого",
    "time": "2026-10-27T21:19:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 242
   },
   {
    "kind": "photo",
@@ -419,7 +441,8 @@
    "rubric": "Спокойной ночи",
    "time": "2026-10-27T21:29:00+03:00",
    "status": "pending",
-   "auto": true
+   "auto": true,
+   "preview_message_id": 244
   },
   {
    "kind": "photo",
@@ -436,7 +459,8 @@
    "rubric": "Анекдот для взрослых",
    "time": "2026-10-27T22:48:00+03:00",
    "status": "pending",
-   "auto": false
+   "auto": false,
+   "preview_message_id": 246
   }
  ],
  "errors": [],
