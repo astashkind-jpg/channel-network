@@ -886,6 +886,43 @@ class TestGigaChat(Base):
                                         date(2026, 10, 25), self.ctx.state.history("auto"))
         self.assertEqual(post["image_via"], "tags")  # генерация не удалась — фото со стока
 
+    def test_real_subject_prefers_real_photo(self):
+        from bot.images import Candidate
+        self.ctx.network.image_source = "gigachat"
+        self.ctx.secrets.gigachat_key = "K"
+        ch = self.ctx.channel("nature")
+        gen = {"image_prompt": "сцена", "image_queries": ["moss micro animal"], "real_subject": "tardigrade"}
+        seen = {}
+        def find(queries, *a, **k):
+            seen["q"] = queries
+            return [Candidate("wikimedia:1", "https://w/t.jpg", 1, via="ai")]
+        self.p_img.stop()
+        with mock.patch("bot.images.find_candidates", side_effect=find), \
+                mock.patch("bot.images.generate_gigachat", return_value=b"img") as draw:
+            post = {"kind": "text", "text": "Тихоходка", "topic": "тихоходка"}
+            core.attach_image(self.ctx, ch, post, gen, self.ctx.state.history("nature"))
+            self.assertEqual(seen["q"][0], "tardigrade")
+            self.assertEqual(post["image_key"], "wikimedia:1")
+            draw.assert_not_called()  # настоящее фото найдено — рисовать не нужно
+            # фото не подтверждено ИИ — рисуем, проверка спрашивает именно про объект
+            self.ctx.network.image_check = True
+            checked = {}
+            def check(*a, subject=""):
+                checked["subject"] = subject
+                return False, "нарисуй тихоходку"
+            self.ctx.ai.check_generated = check
+            self.ctx.ai.pick_image = lambda *a, **k: None
+        with mock.patch("bot.images.find_candidates", return_value=[
+                Candidate("pixabay:2", "https://p/x.jpg", 0, via="fallback")]), \
+                mock.patch("bot.images.generate_gigachat", return_value=b"img") as draw:
+            post = {"kind": "text", "text": "Тихоходка", "topic": "тихоходка"}
+            core.attach_image(self.ctx, ch, post, gen, self.ctx.state.history("nature"))
+            self.assertIn("tardigrade", draw.call_args.args[0])
+        self.p_img.start()
+        self.assertEqual(checked["subject"], "tardigrade")
+        # сомнительный рисунок конкретного объекта хуже фото — берём тематическое фото
+        self.assertEqual(post["image_key"], "pixabay:2")
+
     def test_replace_image_regenerates(self):
         self.ctx.network.image_source = "gigachat"
         self.ctx.secrets.gigachat_key = "K"
