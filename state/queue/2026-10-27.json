@@ -265,20 +265,20 @@
   {
    "kind": "photo",
    "text": "Тихоходку не увидеть без микроскопа, но она способна пережить то, что убивает почти всё живое. 🐻\n\nЭто крошечное существо меньше миллиметра живёт в мокром мху и лишайниках. Когда влага уходит, тихоходка почти полностью высыхает и съёживается в шарик — обмен веществ замирает. В таком состоянии она выдерживает годы без воды, лютый холод, вакуум и космическую радиацию.\n\nА потом достаточно капли воды — и зверёк снова ползёт по мху, как ни в чём не бывало.\n\n👉 💐 <a href=\"https://t.me/otkrytka_dnya_ru\">Открытка дня</a> — добрые открытки на каждый день",
-   "media": "AgACAgIAAyEGAAMBCuKNzAADPGrfHpTGt9_POC6TrP575Hmbf8hvAAIkIWsbbRwBS-MHXI5oCYbxAQADAgADeQADPQQ",
    "topic": "Тихоходка: зверёк, переживший космос",
    "source": null,
    "image_prompt": "Крошечное существо, похожее на медвежонка с восемью лапками, ползёт по влажному мху среди крупных капель воды, осенний лес, пасмурное утро, макро-ракурс, мягкий рассеянный свет, зелёный мох и бурый лишайник на камне, общий план, без людей",
-   "image_from": "gigachat",
-   "image_via": "gen",
-   "image_key": "",
    "id": "nature-2",
    "channel": "nature",
    "rubric": "Удивительное животное",
    "time": "2026-10-27T16:00:00+03:00",
    "status": "pending",
    "auto": true,
-   "preview_message_id": 226
+   "preview_message_id": 248,
+   "media": "AgACAgIAAyEGAAMBCuKNzAADR2rfKUoYJ5ZYWeL_iI8r9ak1UprtAAK2IWsbbRwBS33hU8_bu7NxAQADAgADeQADPQQ",
+   "image_from": "gigachat",
+   "image_via": "gen",
+   "image_key": ""
   },
   {
    "kind": "photo",
@@ -294,7 +294,7 @@
    "channel": "history",
    "rubric": "Как жили в СССР",
    "time": "2026-10-27T17:48:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
    "preview_message_id": 228
   },
@@ -312,7 +312,7 @@
    "channel": "food",
    "rubric": "Рецепт дня",
    "time": "2026-10-27T17:54:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
    "preview_message_id": 230
   },
@@ -332,7 +332,7 @@
    "channel": "afterdark",
    "rubric": "Анекдот для взрослых",
    "time": "2026-10-27T19:22:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": false,
    "preview_message_id": 232
   },
@@ -350,7 +350,7 @@
    "channel": "diy",
    "rubric": "Хитрость мастера",
    "time": "2026-10-27T20:07:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
    "preview_message_id": 234
   },
@@ -368,7 +368,7 @@
    "channel": "nature",
    "rubric": "Чудо природы",
    "time": "2026-10-27T20:24:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
    "preview_message_id": 236
   },
