@@ -65,10 +65,12 @@
    "channel": "auto",
    "rubric": "Разбор поломки",
    "time": "2026-10-26T20:35:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "preview_message_id": 118,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-26T20:39:40.902251+03:00",
+   "message_id": 10
   }
  ],
  "errors": [],
