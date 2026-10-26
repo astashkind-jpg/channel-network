@@ -1235,6 +1235,28 @@ class TestVideo(Base):
         self.assertIn("videos", g.call_args[0][0])
 
 
+class TestCompletePlan(Base):
+    def test_new_channel_added_to_existing_plan(self):
+        food = self.ctx.channel("food")
+        chat = food.chat_id
+        food.chat_id = ""
+        q = self.plan()
+        self.assertFalse(any(p["channel"] == "food" for p in q["posts"]))
+        first = q["posts"][0]
+        first["status"] = "rejected"
+        self.ctx.state.save_queue(q)
+        n_before = len(q["posts"])
+        food.chat_id = chat
+        q2 = self.plan()
+        self.assertEqual(len([p for p in q2["posts"] if p["channel"] == "food"]), 3)
+        self.assertEqual(len(q2["posts"]), n_before + 3)
+        self.assertEqual(next(p for p in q2["posts"] if p["id"] == first["id"])["status"], "rejected")
+        sent = [p.get("text") or "" for p in self.ctx.bot.sent_to(ADMIN)]
+        self.assertTrue(any("добавлены новые каналы" in t for t in sent))
+        q3 = self.plan()  # третий запуск — добавлять нечего
+        self.assertEqual(len(q3["posts"]), n_before + 3)
+
+
 class TestBudget(Base):
     def test_plan_level_and_rushed_note(self):
         self.ctx.network.plan_budget_minutes = 30
