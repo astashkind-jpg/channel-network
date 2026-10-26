@@ -20,8 +20,10 @@ def plan_day(ctx: Context, day: date, force: bool = False) -> dict:
         log.info("план на %s уже есть — пропускаю (используйте --force)", day)
         return existing
 
+    import time
     posts: list[dict] = []
     errors: list[str] = []
+    ctx.plan_started = time.time()
     for ch in ctx.ready_channels():
         log.info("планирую %s", ch.key)
         try:
@@ -38,6 +40,12 @@ def plan_day(ctx: Context, day: date, force: bool = False) -> dict:
             ch = ctx.channel(p["channel"])
             errors.append(f"{ch.title if ch else p['channel']}, {p['rubric']}: без картинки — нажмите 🔄 Заменить")
     posts.sort(key=lambda p: p["time"])
+    rushed = sum(1 for p in posts if p.get("image_rushed"))
+    if rushed:
+        errors.append(f"план строился дольше {ctx.network.plan_budget_minutes} мин — у {rushed} постов фото со стоков "
+                      "вместо рисунка GigaChat")
+    log.info("план построен за %.1f мин", (time.time() - ctx.plan_started) / 60)
+    ctx.plan_started = None
 
     queue = {
         "date": day.isoformat(),

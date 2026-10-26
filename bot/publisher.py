@@ -11,6 +11,8 @@ from .util import esc, now
 log = logging.getLogger(__name__)
 
 EXPIRE_AFTER = timedelta(hours=12)  # ручной пост, не утверждённый за 12 ч после своего времени, сгорает
+LATE_LIMIT = timedelta(hours=3)     # утверждённый пост, опоздавший больше чем на 3 ч, не публикуем —
+                                    # иначе после сбоя все пропущенные посты вышли бы разом
 
 
 def auto_approve(ctx: Context, queue: dict) -> int:
@@ -52,6 +54,10 @@ def publish_due(ctx: Context, queue: dict) -> list[str]:
             p["status"] = "expired"
             continue
         if p["status"] != "approved" or "all" in paused or p["channel"] in paused:
+            continue
+        if current - when > LATE_LIMIT:
+            p["status"] = "expired"
+            p["error"] = "опоздал больше чем на 3 часа — не опубликован, чтобы не выпускать посты пачкой"
             continue
         try:
             msg = publish_post(ctx, p)

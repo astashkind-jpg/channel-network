@@ -32,6 +32,17 @@ class Context:
     state: State
     rng: random.Random = field(default_factory=random.Random)
     dry_run: bool = False
+    plan_started: float | None = None   # время начала вечернего плана (для лимита времени)
+
+    def plan_level(self) -> int:
+        """0 — всё как обычно; 1 — план идёт дольше лимита: без GigaChat;
+        2 — вдвое дольше: ещё и без ИИ-проверки фото и без стоковых видео (лишь бы успеть)."""
+        if self.plan_started is None:
+            return 0
+        import time
+        minutes = (time.time() - self.plan_started) / 60
+        budget = max(5, self.network.plan_budget_minutes)
+        return 2 if minutes >= budget * 2 else 1 if minutes >= budget else 0
 
     @classmethod
     def from_env(cls) -> "Context":
@@ -162,7 +173,10 @@ def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict
     source = ch.image_source or ctx.network.image_source
     post["image_prompt"] = gen.get("image_prompt") or post.get("image_prompt") or ""
     unchecked = None  # нарисованная картинка, не прошедшая проверку — на крайний случай
-    if source == "gigachat" and post["image_prompt"] and ctx.secrets.gigachat_key:
+    level = ctx.plan_level()
+    if level and source == "gigachat":
+        post["image_rushed"] = True
+    if source == "gigachat" and post["image_prompt"] and ctx.secrets.gigachat_key and level == 0:
         good, unchecked = generate_checked(ctx, post)
         if good and use_generated(ctx, post, good, "gen"):
             return
@@ -180,7 +194,7 @@ def attach_image(ctx: Context, ch: Channel, post: dict, gen: dict, history: dict
                 log.warning("сгенерированная картинка не загрузилась: %s", e)
     queries = gen.get("image_queries") or ([gen["image_query"]] if gen.get("image_query") else [])
     judge = None
-    if ctx.network.image_check and not ctx.dry_run:
+    if ctx.network.image_check and not ctx.dry_run and level < 2:
         topic, plain = post.get("topic", ""), post["text"]
         judge = lambda cands: ctx.ai.pick_image(topic, plain, cands)
     post["image_queries"] = queries
@@ -266,6 +280,8 @@ def build_stock_video(ctx: Context, ch: Channel, day: date, history: dict, exclu
     """Бесплатный ролик Pixabay под тему: ИИ пишет подпись и запросы, затем ИИ со зрением
     смотрит обложки найденных роликов и выбирает подходящий."""
     if not (ctx.network.stock_video and ch.use_stock_video and ctx.secrets.pixabay_key):
+        return None
+    if ctx.plan_level() >= 2:
         return None
     gen = ctx.ai.generate_post(ch, STOCK_VIDEO_RUBRIC, human_date(day), history["topics"])
     max_bytes = min(ctx.network.video_max_mb, 45) * 1024 * 1024

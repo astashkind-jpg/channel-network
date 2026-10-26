@@ -70,6 +70,7 @@ class Network:
     promo_per_channel_per_day: int = 1
     video_max_age_days: int = 4
     video_max_mb: int = 49
+    plan_budget_minutes: int = 35       # после стольких минут плана GigaChat не рисует — фото со стоков
     stock_video: bool = True            # видео-рубрики: брать бесплатные ролики Pixabay, если нет других
     recent_topics: int = 60
     ad_markers: list[str] = field(default_factory=lambda: ["erid", "реклама", "#ad", "промокод"])
