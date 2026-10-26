@@ -41,10 +41,12 @@
    "channel": "auto",
    "rubric": "Сезонный уход",
    "time": "2026-10-26T14:26:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "preview_message_id": 116,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-26T16:58:15.766726+03:00",
+   "message_id": 9
   },
   {
    "kind": "photo",
