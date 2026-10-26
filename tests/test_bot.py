@@ -372,7 +372,10 @@ class TestApprovalsAndPublishing(Base):
         q = self.ctx.state.load_queue(day)
         for p in q["posts"]:
             manual = p["channel"] == "afterdark" and p["rubric"] != "Каталог сети"
-            self.assertEqual(p["status"], "expired" if manual else "published")
+            # 13 ч опоздания: ручной сгорает без ✅, автоматический — как опоздавший больше 3 ч
+            self.assertEqual(p["status"], "expired")
+            if not manual:
+                self.assertIn("опоздал", p.get("error", ""))
 
     def test_pause_blocks_publishing(self):
         day = date.today() + timedelta(days=1)
@@ -1230,6 +1233,29 @@ class TestVideo(Base):
         self.assertEqual(c[0].preview, "tm")
         self.assertEqual(c[0].score, 1)
         self.assertIn("videos", g.call_args[0][0])
+
+
+class TestBudget(Base):
+    def test_plan_level_and_rushed_note(self):
+        self.ctx.network.plan_budget_minutes = 30
+        self.assertEqual(self.ctx.plan_level(), 0)
+        self.ctx.plan_started = time.time() - 31 * 60
+        self.assertEqual(self.ctx.plan_level(), 1)
+        self.ctx.plan_started = time.time() - 61 * 60
+        self.assertEqual(self.ctx.plan_level(), 2)
+        self.ctx.plan_started = None
+        self.ctx.network.plan_budget_minutes = 0  # минимум 5 минут — без задержки план всё равно идёт как обычно
+        q = self.plan()
+        self.assertFalse(any("дольше" in e for e in q["errors"]))
+
+    def test_late_posts_not_flooded(self):
+        q = self.plan()
+        for p in q["posts"]:
+            p["status"] = "approved"
+        late = datetime.fromisoformat(q["posts"][0]["time"]) + timedelta(hours=5)
+        with mock.patch("bot.publisher.now", return_value=late):
+            publisher.publish_due(self.ctx, q)
+        self.assertEqual(q["posts"][0]["status"], "expired")
 
 
 class TestNormalize(unittest.TestCase):
