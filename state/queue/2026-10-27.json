@@ -112,10 +112,12 @@
    "channel": "nature",
    "rubric": "Видео",
    "time": "2026-10-27T10:01:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "preview_message_id": 208,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-27T10:25:58.828136+03:00",
+   "message_id": 5
   },
   {
    "kind": "photo",
@@ -131,10 +133,12 @@
    "channel": "intimacy",
    "rubric": "Миф или правда",
    "time": "2026-10-27T10:19:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "preview_message_id": 210,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-27T10:25:58.828136+03:00",
+   "message_id": 6
   },
   {
    "kind": "photo",
