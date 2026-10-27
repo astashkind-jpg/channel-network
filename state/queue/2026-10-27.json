@@ -165,10 +165,12 @@
    "channel": "food",
    "rubric": "Полезная замена",
    "time": "2026-10-27T11:46:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "preview_message_id": 212,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-27T12:16:29.111756+03:00",
+   "message_id": 6
   },
   {
    "kind": "photo",
@@ -184,10 +186,12 @@
    "channel": "history",
    "rubric": "Вещь из прошлого",
    "time": "2026-10-27T11:52:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "preview_message_id": 214,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-27T12:16:29.111756+03:00",
+   "message_id": 6
   },
   {
    "kind": "photo",
