@@ -477,10 +477,12 @@
    "channel": "history",
    "rubric": "Вещь из прошлого",
    "time": "2026-10-27T21:19:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "preview_message_id": 242,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-27T22:23:31.106411+03:00",
+   "message_id": 8
   },
   {
    "kind": "photo",
@@ -496,10 +498,12 @@
    "channel": "cards",
    "rubric": "Спокойной ночи",
    "time": "2026-10-27T21:29:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "preview_message_id": 244,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-27T22:23:31.106411+03:00",
+   "message_id": 5
   },
   {
    "kind": "photo",
