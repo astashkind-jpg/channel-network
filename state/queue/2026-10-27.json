@@ -375,9 +375,11 @@
    "channel": "afterdark",
    "rubric": "Анекдот для взрослых",
    "time": "2026-10-27T19:22:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": false,
-   "preview_message_id": 232
+   "preview_message_id": 232,
+   "published_at": "2026-10-27T19:22:54.583104+03:00",
+   "message_id": 5
   },
   {
    "kind": "photo",
