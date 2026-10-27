@@ -17,10 +17,12 @@
    "channel": "cards",
    "rubric": "Доброе утро",
    "time": "2026-10-27T06:51:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "preview_message_id": 200,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-27T07:11:02.174879+03:00",
+   "message_id": 3
   },
   {
    "kind": "photo",
