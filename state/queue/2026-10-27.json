@@ -333,9 +333,11 @@
    "channel": "history",
    "rubric": "Как жили в СССР",
    "time": "2026-10-27T17:48:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "preview_message_id": 228
+   "preview_message_id": 228,
+   "published_at": "2026-10-27T18:23:09.988118+03:00",
+   "message_id": 7
   },
   {
    "kind": "photo",
@@ -351,9 +353,11 @@
    "channel": "food",
    "rubric": "Рецепт дня",
    "time": "2026-10-27T17:54:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "preview_message_id": 230
+   "preview_message_id": 230,
+   "published_at": "2026-10-27T18:23:09.988118+03:00",
+   "message_id": 7
   },
   {
    "kind": "photo",
