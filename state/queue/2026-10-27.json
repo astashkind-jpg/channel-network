@@ -291,10 +291,12 @@
    "channel": "intimacy",
    "rubric": "Психология пары",
    "time": "2026-10-27T15:44:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "preview_message_id": 224,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-27T16:28:36.154449+03:00",
+   "message_id": 7
   },
   {
    "kind": "photo",
@@ -306,14 +308,16 @@
    "channel": "nature",
    "rubric": "Удивительное животное",
    "time": "2026-10-27T16:00:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "preview_message_id": 248,
    "media": "AgACAgIAAyEGAAMBCuKNzAADR2rfKUoYJ5ZYWeL_iI8r9ak1UprtAAK2IWsbbRwBS33hU8_bu7NxAQADAgADeQADPQQ",
    "image_from": "gigachat",
    "image_via": "gen",
    "image_key": "",
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-27T16:28:36.154449+03:00",
+   "message_id": 6
   },
   {
    "kind": "photo",
