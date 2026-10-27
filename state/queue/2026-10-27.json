@@ -246,10 +246,12 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-10-27T13:18:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "preview_message_id": 220,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-27T14:13:43.217555+03:00",
+   "message_id": 12
   },
   {
    "kind": "photo",
@@ -268,10 +270,12 @@
    "channel": "diy",
    "rubric": "Ошибка ремонта",
    "time": "2026-10-27T13:48:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "preview_message_id": 222,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-27T14:13:43.217555+03:00",
+   "message_id": 8
   },
   {
    "kind": "photo",
