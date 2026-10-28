@@ -291,9 +291,11 @@
    "channel": "auto",
    "rubric": "Сезонный уход",
    "time": "2026-10-28T13:32:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-28T13:46:47.541137+03:00",
+   "message_id": 15
   },
   {
    "kind": "photo",
