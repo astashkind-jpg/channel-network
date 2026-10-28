@@ -451,9 +451,11 @@
    "channel": "auto",
    "rubric": "Разбор поломки",
    "time": "2026-10-28T19:56:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-28T20:47:18.235771+03:00",
+   "message_id": 16
   },
   {
    "kind": "photo",
@@ -475,9 +477,11 @@
    "channel": "diy",
    "rubric": "Ошибка ремонта",
    "time": "2026-10-28T20:06:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-28T20:47:18.235771+03:00",
+   "message_id": 12
   },
   {
    "kind": "video",
@@ -497,9 +501,11 @@
    "channel": "nature",
    "rubric": "Видео",
    "time": "2026-10-28T20:09:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-28T20:47:18.235771+03:00",
+   "message_id": 10
   },
   {
    "kind": "photo",
