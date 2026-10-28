@@ -161,9 +161,11 @@
    "channel": "nature",
    "rubric": "Чудо природы",
    "time": "2026-10-28T10:46:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-28T10:59:18.302743+03:00",
+   "message_id": 8
   },
   {
    "kind": "photo",
