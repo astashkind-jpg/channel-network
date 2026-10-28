@@ -317,9 +317,11 @@
    "channel": "intimacy",
    "rubric": "Миф или правда",
    "time": "2026-10-28T14:38:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-28T14:43:57.136897+03:00",
+   "message_id": 10
   },
   {
    "kind": "video",
