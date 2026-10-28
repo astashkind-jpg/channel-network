@@ -556,9 +556,11 @@
    "channel": "history",
    "rubric": "Загадка истории",
    "time": "2026-10-28T21:41:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-28T21:48:54.307591+03:00",
+   "message_id": 11
   },
   {
    "kind": "photo",
