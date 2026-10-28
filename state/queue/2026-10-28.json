@@ -399,9 +399,11 @@
    "channel": "history",
    "rubric": "Вещь из прошлого",
    "time": "2026-10-28T17:18:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-28T17:55:11.023643+03:00",
+   "message_id": 10
   },
   {
    "kind": "photo",
