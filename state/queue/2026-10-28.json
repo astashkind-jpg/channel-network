@@ -341,9 +341,11 @@
    "channel": "diy",
    "rubric": "Видео",
    "time": "2026-10-28T14:53:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-28T15:54:18.985981+03:00",
+   "message_id": 11
   },
   {
    "kind": "photo",
@@ -368,9 +370,11 @@
    "channel": "nature",
    "rubric": "Удивительное животное",
    "time": "2026-10-28T15:03:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-28T15:54:18.985981+03:00",
+   "message_id": 9
   },
   {
    "kind": "photo",
