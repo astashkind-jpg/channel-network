@@ -541,9 +541,11 @@
    "channel": "cards",
    "rubric": "Спокойной ночи",
    "time": "2026-10-29T21:18:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T21:50:53.465884+03:00",
+   "message_id": 11
   },
   {
    "kind": "photo",
@@ -565,9 +567,11 @@
    "channel": "history",
    "rubric": "Вещь из прошлого",
    "time": "2026-10-29T21:22:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T21:50:53.465884+03:00",
+   "message_id": 14
   },
   {
    "kind": "photo",
@@ -589,9 +593,11 @@
    "channel": "intimacy",
    "rubric": "Факт",
    "time": "2026-10-29T21:34:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T21:50:53.465884+03:00",
+   "message_id": 14
   },
   {
    "kind": "photo",
