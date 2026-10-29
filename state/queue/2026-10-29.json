@@ -75,9 +75,11 @@
    "channel": "diy",
    "rubric": "Хитрость мастера",
    "time": "2026-10-29T08:43:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T08:45:12.346528+03:00",
+   "message_id": 13
   },
   {
    "kind": "photo",
