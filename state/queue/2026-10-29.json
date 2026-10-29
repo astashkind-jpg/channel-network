@@ -337,9 +337,11 @@
    "channel": "intimacy",
    "rubric": "Психология пары",
    "time": "2026-10-29T15:38:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T15:55:15.307832+03:00",
+   "message_id": 13
   },
   {
    "kind": "photo",
