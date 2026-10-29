@@ -101,9 +101,11 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-10-29T08:56:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T09:54:59.339517+03:00",
+   "message_id": 17
   },
   {
    "kind": "video",
@@ -123,9 +125,11 @@
    "channel": "nature",
    "rubric": "Видео",
    "time": "2026-10-29T09:45:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T09:54:59.339517+03:00",
+   "message_id": 11
   },
   {
    "kind": "photo",
