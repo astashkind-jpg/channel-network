@@ -284,9 +284,11 @@
    "channel": "auto",
    "rubric": "Разбор поломки",
    "time": "2026-10-29T13:21:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T13:49:01.142304+03:00",
+   "message_id": 18
   },
   {
    "kind": "video",
@@ -306,9 +308,11 @@
    "channel": "diy",
    "rubric": "Видео",
    "time": "2026-10-29T13:42:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T13:49:01.142304+03:00",
+   "message_id": 14
   },
   {
    "kind": "photo",
