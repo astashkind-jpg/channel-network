@@ -489,9 +489,11 @@
    "channel": "nature",
    "rubric": "Видео",
    "time": "2026-10-29T20:08:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T20:49:55.118009+03:00",
+   "message_id": 13
   },
   {
    "kind": "photo",
@@ -513,9 +515,11 @@
    "channel": "diy",
    "rubric": "Хитрость мастера",
    "time": "2026-10-29T20:16:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T20:49:55.118009+03:00",
+   "message_id": 15
   },
   {
    "kind": "photo",
