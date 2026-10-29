@@ -151,9 +151,11 @@
    "channel": "intimacy",
    "rubric": "Факт",
    "time": "2026-10-29T10:22:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T11:01:23.497164+03:00",
+   "message_id": 12
   },
   {
    "kind": "photo",
@@ -178,9 +180,11 @@
    "channel": "history",
    "rubric": "Вещь из прошлого",
    "time": "2026-10-29T10:57:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T11:01:23.497164+03:00",
+   "message_id": 12
   },
   {
    "kind": "photo",
