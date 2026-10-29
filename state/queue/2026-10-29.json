@@ -229,9 +229,11 @@
    "channel": "food",
    "rubric": "Рецепт дня",
    "time": "2026-10-29T12:38:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T12:51:57.110911+03:00",
+   "message_id": 12
   },
   {
    "kind": "photo",
@@ -253,9 +255,11 @@
    "channel": "cards",
    "rubric": "Повод дня",
    "time": "2026-10-29T12:43:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T12:51:57.110911+03:00",
+   "message_id": 10
   },
   {
    "kind": "photo",
