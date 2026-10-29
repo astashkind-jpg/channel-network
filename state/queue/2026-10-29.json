@@ -23,9 +23,11 @@
    "channel": "cards",
    "rubric": "Доброе утро",
    "time": "2026-10-29T06:49:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T07:48:15.187832+03:00",
+   "message_id": 9
   },
   {
    "kind": "photo",
@@ -47,9 +49,11 @@
    "channel": "food",
    "rubric": "Лайфхак кухни",
    "time": "2026-10-29T07:47:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-29T07:48:15.187832+03:00",
+   "message_id": 11
   },
   {
    "kind": "photo",
