@@ -345,9 +345,11 @@
    "channel": "nature",
    "rubric": "Видео",
    "time": "2026-10-30T15:00:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-30T15:55:03.354199+03:00",
+   "message_id": 15
   },
   {
    "kind": "photo",
@@ -369,9 +371,11 @@
    "channel": "intimacy",
    "rubric": "Факт",
    "time": "2026-10-30T15:09:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-30T15:55:03.354199+03:00",
+   "message_id": 16
   },
   {
    "kind": "photo",
