@@ -80,9 +80,11 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-10-30T08:48:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-30T09:54:36.066402+03:00",
+   "message_id": 20
   },
   {
    "kind": "photo",
@@ -107,9 +109,11 @@
    "channel": "diy",
    "rubric": "Хитрость мастера",
    "time": "2026-10-30T09:13:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-30T09:54:36.066402+03:00",
+   "message_id": 16
   },
   {
    "kind": "photo",
@@ -134,9 +138,11 @@
    "channel": "nature",
    "rubric": "Удивительное животное",
    "time": "2026-10-30T09:43:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-30T09:54:36.066402+03:00",
+   "message_id": 14
   },
   {
    "kind": "photo",
