@@ -321,9 +321,11 @@
    "channel": "diy",
    "rubric": "Самоделка",
    "time": "2026-10-30T14:10:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-30T14:40:54.943943+03:00",
+   "message_id": 17
   },
   {
    "kind": "video",
