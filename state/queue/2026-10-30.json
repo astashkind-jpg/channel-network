@@ -500,9 +500,11 @@
    "channel": "diy",
    "rubric": "Видео",
    "time": "2026-10-30T20:54:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-30T21:47:36.266990+03:00",
+   "message_id": 18
   },
   {
    "kind": "photo",
@@ -527,9 +529,11 @@
    "channel": "nature",
    "rubric": "Удивительное животное",
    "time": "2026-10-30T21:18:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-30T21:47:36.266990+03:00",
+   "message_id": 16
   },
   {
    "kind": "photo",
@@ -552,9 +556,11 @@
    "channel": "history",
    "rubric": "Вещь из прошлого",
    "time": "2026-10-30T21:18:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-30T21:47:36.266990+03:00",
+   "message_id": 17
   },
   {
    "kind": "photo",
@@ -578,9 +584,11 @@
    "channel": "cards",
    "rubric": "Спокойной ночи",
    "time": "2026-10-30T21:18:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-30T21:47:36.266990+03:00",
+   "message_id": 14
   },
   {
    "kind": "photo",
