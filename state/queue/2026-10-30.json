@@ -476,9 +476,11 @@
    "channel": "auto",
    "rubric": "Разбор поломки",
    "time": "2026-10-30T20:13:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-30T20:43:30.651664+03:00",
+   "message_id": 22
   },
   {
    "kind": "video",
