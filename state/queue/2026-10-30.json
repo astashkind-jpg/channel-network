@@ -164,9 +164,11 @@
    "channel": "intimacy",
    "rubric": "Психология пары",
    "time": "2026-10-30T10:26:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-30T11:01:35.355276+03:00",
+   "message_id": 15
   },
   {
    "kind": "photo",
@@ -189,9 +191,11 @@
    "channel": "history",
    "rubric": "Вещь из прошлого",
    "time": "2026-10-30T10:42:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-30T11:01:35.355276+03:00",
+   "message_id": 15
   },
   {
    "kind": "photo",
