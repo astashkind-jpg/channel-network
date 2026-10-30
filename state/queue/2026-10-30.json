@@ -610,9 +610,11 @@
    "channel": "intimacy",
    "rubric": "Миф или правда",
    "time": "2026-10-30T22:23:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-30T22:47:37.933220+03:00",
+   "message_id": 17
   },
   {
    "kind": "photo",
