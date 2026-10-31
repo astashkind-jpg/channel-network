@@ -420,9 +420,11 @@
    "channel": "food",
    "rubric": "Лайфхак кухни",
    "time": "2026-10-31T18:58:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-31T19:12:40.666558+03:00",
+   "message_id": 19
   },
   {
    "kind": "photo",
