@@ -467,9 +467,11 @@
    "channel": "diy",
    "rubric": "Видео",
    "time": "2026-10-31T20:01:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-31T20:10:53.875223+03:00",
+   "message_id": 21
   },
   {
    "kind": "photo",
