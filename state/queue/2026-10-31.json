@@ -571,9 +571,11 @@
    "channel": "cards",
    "rubric": "Спокойной ночи",
    "time": "2026-10-31T21:50:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-31T22:39:34.937393+03:00",
+   "message_id": 17
   },
   {
    "kind": "photo",
@@ -598,9 +600,11 @@
    "channel": "nature",
    "rubric": "Чудо природы",
    "time": "2026-10-31T21:52:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-31T22:39:34.937393+03:00",
+   "message_id": 19
   },
   {
    "kind": "photo",

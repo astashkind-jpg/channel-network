@@ -23,8 +23,9 @@
    "channel": "cards",
    "rubric": "Доброе утро",
    "time": "2026-11-01T06:48:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -46,8 +47,9 @@
    "channel": "food",
    "rubric": "Полезная замена",
    "time": "2026-11-01T08:04:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -69,8 +71,9 @@
    "channel": "auto",
    "rubric": "Сезонный уход",
    "time": "2026-11-01T08:49:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -95,8 +98,9 @@
    "channel": "nature",
    "rubric": "Удивительное животное",
    "time": "2026-11-01T09:27:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "video",
@@ -116,8 +120,9 @@
    "channel": "diy",
    "rubric": "Видео",
    "time": "2026-11-01T09:28:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -139,8 +144,9 @@
    "channel": "intimacy",
    "rubric": "Психология пары",
    "time": "2026-11-01T09:58:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -162,15 +168,16 @@
    "channel": "history",
    "rubric": "Вещь из прошлого",
    "time": "2026-11-01T11:01:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "id": "afterdark-catalog",
    "channel": "afterdark",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:07:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🍒 <a href=\"https://t.me/mezhdu_nami_18\">Между нами</a> — об отношениях и сексуальности без стеснения",
@@ -182,14 +189,15 @@
    "image_from": "pixabay",
    "image_key": "pixabay:647400",
    "image_via": "fallback",
-   "image_credit": ""
+   "image_credit": "",
+   "approved_by": "auto"
   },
   {
    "id": "diy-catalog",
    "channel": "diy",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:11:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🚗 <a href=\"https://t.me/pod_kapotom_avto\">Под капотом</a> — авто-лайфхаки и ремонт своими руками\n🥗 <a href=\"https://t.me/vkusno_i_polezno_nam\">Вкусно и полезно</a> — простые рецепты и правильное питание\n🐾 <a href=\"https://t.me/dikaya_planeta_zoo\">Дикая планета</a> — удивительные животные и природа\n📜 <a href=\"https://t.me/bylo_vremya_istoriya\">Было время</a> — история, СССР и вещи из нашего детства\n💐 <a href=\"https://t.me/otkrytka_dnya_ru\">Открытка дня</a> — добрые открытки на каждый день",
@@ -201,14 +209,15 @@
    "image_from": "pixabay",
    "image_key": "pixabay:1073515",
    "image_via": "fallback",
-   "image_credit": ""
+   "image_credit": "",
+   "approved_by": "auto"
   },
   {
    "id": "history-catalog",
    "channel": "history",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:32:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🚗 <a href=\"https://t.me/pod_kapotom_avto\">Под капотом</a> — авто-лайфхаки и ремонт своими руками\n🔨 <a href=\"https://t.me/ruki_iz_plech_diy\">Руки из плеч DIY</a> — ремонт, самоделки и хитрости мастеров\n🥗 <a href=\"https://t.me/vkusno_i_polezno_nam\">Вкусно и полезно</a> — простые рецепты и правильное питание\n🐾 <a href=\"https://t.me/dikaya_planeta_zoo\">Дикая планета</a> — удивительные животные и природа\n💐 <a href=\"https://t.me/otkrytka_dnya_ru\">Открытка дня</a> — добрые открытки на каждый день",
@@ -220,14 +229,15 @@
    "image_from": "pixabay",
    "image_key": "pixabay:1130743",
    "image_via": "fallback",
-   "image_credit": ""
+   "image_credit": "",
+   "approved_by": "auto"
   },
   {
    "id": "intimacy-catalog",
    "channel": "intimacy",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:40:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🌶 <a href=\"https://t.me/+w-NZrhfJBxkxNGJi\">После 24:00</a> — юмор для взрослых",
@@ -239,7 +249,8 @@
    "image_from": "pixabay",
    "image_key": "pixabay:3064048",
    "image_via": "fallback",
-   "image_credit": ""
+   "image_credit": "",
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -261,15 +272,16 @@
    "channel": "cards",
    "rubric": "Повод дня",
    "time": "2026-11-01T12:41:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "id": "auto-catalog",
    "channel": "auto",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:43:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🔨 <a href=\"https://t.me/ruki_iz_plech_diy\">Руки из плеч DIY</a> — ремонт, самоделки и хитрости мастеров\n🥗 <a href=\"https://t.me/vkusno_i_polezno_nam\">Вкусно и полезно</a> — простые рецепты и правильное питание\n🐾 <a href=\"https://t.me/dikaya_planeta_zoo\">Дикая планета</a> — удивительные животные и природа\n📜 <a href=\"https://t.me/bylo_vremya_istoriya\">Было время</a> — история, СССР и вещи из нашего детства\n💐 <a href=\"https://t.me/otkrytka_dnya_ru\">Открытка дня</a> — добрые открытки на каждый день",
@@ -281,7 +293,8 @@
    "image_from": "pixabay",
    "image_key": "pixabay:1738309",
    "image_via": "fallback",
-   "image_credit": ""
+   "image_credit": "",
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -303,15 +316,16 @@
    "channel": "food",
    "rubric": "Лайфхак кухни",
    "time": "2026-11-01T12:44:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "id": "food-catalog",
    "channel": "food",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:44:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🚗 <a href=\"https://t.me/pod_kapotom_avto\">Под капотом</a> — авто-лайфхаки и ремонт своими руками\n🔨 <a href=\"https://t.me/ruki_iz_plech_diy\">Руки из плеч DIY</a> — ремонт, самоделки и хитрости мастеров\n🐾 <a href=\"https://t.me/dikaya_planeta_zoo\">Дикая планета</a> — удивительные животные и природа\n📜 <a href=\"https://t.me/bylo_vremya_istoriya\">Было время</a> — история, СССР и вещи из нашего детства\n💐 <a href=\"https://t.me/otkrytka_dnya_ru\">Открытка дня</a> — добрые открытки на каждый день",
@@ -323,14 +337,15 @@
    "image_from": "pixabay",
    "image_key": "pixabay:563796",
    "image_via": "fallback",
-   "image_credit": ""
+   "image_credit": "",
+   "approved_by": "auto"
   },
   {
    "id": "cards-catalog",
    "channel": "cards",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:54:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🚗 <a href=\"https://t.me/pod_kapotom_avto\">Под капотом</a> — авто-лайфхаки и ремонт своими руками\n🔨 <a href=\"https://t.me/ruki_iz_plech_diy\">Руки из плеч DIY</a> — ремонт, самоделки и хитрости мастеров\n🥗 <a href=\"https://t.me/vkusno_i_polezno_nam\">Вкусно и полезно</a> — простые рецепты и правильное питание\n🐾 <a href=\"https://t.me/dikaya_planeta_zoo\">Дикая планета</a> — удивительные животные и природа\n📜 <a href=\"https://t.me/bylo_vremya_istoriya\">Было время</a> — история, СССР и вещи из нашего детства",
@@ -342,14 +357,15 @@
    "image_from": "pixabay",
    "image_key": "pixabay:1850126",
    "image_via": "fallback",
-   "image_credit": ""
+   "image_credit": "",
+   "approved_by": "auto"
   },
   {
    "id": "nature-catalog",
    "channel": "nature",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:59:00+03:00",
-   "status": "pending",
+   "status": "approved",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🚗 <a href=\"https://t.me/pod_kapotom_avto\">Под капотом</a> — авто-лайфхаки и ремонт своими руками\n🔨 <a href=\"https://t.me/ruki_iz_plech_diy\">Руки из плеч DIY</a> — ремонт, самоделки и хитрости мастеров\n🥗 <a href=\"https://t.me/vkusno_i_polezno_nam\">Вкусно и полезно</a> — простые рецепты и правильное питание\n📜 <a href=\"https://t.me/bylo_vremya_istoriya\">Было время</a> — история, СССР и вещи из нашего детства\n💐 <a href=\"https://t.me/otkrytka_dnya_ru\">Открытка дня</a> — добрые открытки на каждый день",
@@ -361,7 +377,8 @@
    "image_from": "pixabay",
    "image_key": "pixabay:9297255",
    "image_via": "fallback",
-   "image_credit": ""
+   "image_credit": "",
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -404,8 +421,9 @@
    "channel": "auto",
    "rubric": "Видео",
    "time": "2026-11-01T14:19:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -430,8 +448,9 @@
    "channel": "intimacy",
    "rubric": "Миф или правда",
    "time": "2026-11-01T14:50:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -458,8 +477,9 @@
    "channel": "diy",
    "rubric": "Ошибка ремонта",
    "time": "2026-11-01T14:56:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "video",
@@ -479,8 +499,9 @@
    "channel": "nature",
    "rubric": "Видео",
    "time": "2026-11-01T15:44:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -502,8 +523,9 @@
    "channel": "history",
    "rubric": "Как жили в СССР",
    "time": "2026-11-01T16:54:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -525,8 +547,9 @@
    "channel": "food",
    "rubric": "Рецепт дня",
    "time": "2026-11-01T18:06:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -553,8 +576,9 @@
    "channel": "diy",
    "rubric": "Хитрость мастера",
    "time": "2026-11-01T19:55:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -572,8 +596,9 @@
    "channel": "nature",
    "rubric": "Удивительное животное",
    "time": "2026-11-01T20:27:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -621,8 +646,9 @@
    "channel": "history",
    "rubric": "Вещь из прошлого",
    "time": "2026-11-01T20:40:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -644,8 +670,9 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-11-01T20:44:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -667,8 +694,9 @@
    "channel": "cards",
    "rubric": "Спокойной ночи",
    "time": "2026-11-01T21:23:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -690,8 +718,9 @@
    "channel": "intimacy",
    "rubric": "Факт",
    "time": "2026-11-01T22:44:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
