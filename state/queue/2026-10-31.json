@@ -237,9 +237,11 @@
    "channel": "cards",
    "rubric": "Повод дня",
    "time": "2026-10-31T12:56:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-31T13:38:14.692182+03:00",
+   "message_id": 16
   },
   {
    "kind": "photo",
@@ -261,9 +263,11 @@
    "channel": "food",
    "rubric": "Полезная замена",
    "time": "2026-10-31T12:57:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-31T13:38:14.692182+03:00",
+   "message_id": 18
   },
   {
    "kind": "photo",
@@ -285,9 +289,11 @@
    "channel": "auto",
    "rubric": "Разбор поломки",
    "time": "2026-10-31T13:11:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-31T13:38:14.692182+03:00",
+   "message_id": 24
   },
   {
    "kind": "photo",
