@@ -493,9 +493,11 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-10-31T20:41:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-31T21:06:12.547313+03:00",
+   "message_id": 25
   },
   {
    "kind": "photo",
