@@ -341,9 +341,11 @@
    "channel": "diy",
    "rubric": "Хитрость мастера",
    "time": "2026-10-31T14:38:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-31T15:48:01.625631+03:00",
+   "message_id": 20
   },
   {
    "kind": "video",
