@@ -75,9 +75,11 @@
    "channel": "diy",
    "rubric": "Ошибка ремонта",
    "time": "2026-10-31T08:57:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-31T09:51:07.979965+03:00",
+   "message_id": 19
   },
   {
    "kind": "photo",
@@ -99,9 +101,11 @@
    "channel": "intimacy",
    "rubric": "Факт",
    "time": "2026-10-31T09:12:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-31T09:51:07.979965+03:00",
+   "message_id": 18
   },
   {
    "kind": "photo",
@@ -128,9 +132,11 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-10-31T09:22:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-31T09:51:07.979965+03:00",
+   "message_id": 23
   },
   {
    "kind": "photo",
