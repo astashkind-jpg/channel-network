@@ -519,9 +519,11 @@
    "channel": "intimacy",
    "rubric": "Психология пары",
    "time": "2026-10-31T21:21:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-31T21:46:54.593527+03:00",
+   "message_id": 20
   },
   {
    "kind": "photo",
@@ -543,9 +545,11 @@
    "channel": "history",
    "rubric": "Как жили в СССР",
    "time": "2026-10-31T21:46:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-10-31T21:46:54.593527+03:00",
+   "message_id": 20
   },
   {
    "kind": "photo",
