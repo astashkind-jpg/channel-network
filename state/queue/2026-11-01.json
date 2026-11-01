@@ -644,9 +644,11 @@
    "channel": "nature",
    "rubric": "Удивительное животное",
    "time": "2026-11-01T20:27:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T21:06:29.054368+03:00",
+   "message_id": 23
   },
   {
    "kind": "photo",
@@ -694,9 +696,11 @@
    "channel": "history",
    "rubric": "Вещь из прошлого",
    "time": "2026-11-01T20:40:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T21:06:29.054368+03:00",
+   "message_id": 24
   },
   {
    "kind": "photo",
@@ -718,9 +722,11 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-11-01T20:44:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T21:06:29.054368+03:00",
+   "message_id": 29
   },
   {
    "kind": "photo",
