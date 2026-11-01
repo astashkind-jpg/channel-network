@@ -235,7 +235,7 @@
    "channel": "history",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:32:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🚗 <a href=\"https://t.me/pod_kapotom_avto\">Под капотом</a> — авто-лайфхаки и ремонт своими руками\n🔨 <a href=\"https://t.me/ruki_iz_plech_diy\">Руки из плеч DIY</a> — ремонт, самоделки и хитрости мастеров\n🥗 <a href=\"https://t.me/vkusno_i_polezno_nam\">Вкусно и полезно</a> — простые рецепты и правильное питание\n🐾 <a href=\"https://t.me/dikaya_planeta_zoo\">Дикая планета</a> — удивительные животные и природа\n💐 <a href=\"https://t.me/otkrytka_dnya_ru\">Открытка дня</a> — добрые открытки на каждый день",
@@ -248,14 +248,16 @@
    "image_key": "pixabay:1130743",
    "image_via": "fallback",
    "image_credit": "",
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T13:16:09.153942+03:00",
+   "message_id": 22
   },
   {
    "id": "intimacy-catalog",
    "channel": "intimacy",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:40:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🌶 <a href=\"https://t.me/+w-NZrhfJBxkxNGJi\">После 24:00</a> — юмор для взрослых",
@@ -268,7 +270,9 @@
    "image_key": "pixabay:3064048",
    "image_via": "fallback",
    "image_credit": "",
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T13:16:09.153942+03:00",
+   "message_id": 22
   },
   {
    "kind": "photo",
@@ -290,16 +294,18 @@
    "channel": "cards",
    "rubric": "Повод дня",
    "time": "2026-11-01T12:41:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T13:16:09.153942+03:00",
+   "message_id": 19
   },
   {
    "id": "auto-catalog",
    "channel": "auto",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:43:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🔨 <a href=\"https://t.me/ruki_iz_plech_diy\">Руки из плеч DIY</a> — ремонт, самоделки и хитрости мастеров\n🥗 <a href=\"https://t.me/vkusno_i_polezno_nam\">Вкусно и полезно</a> — простые рецепты и правильное питание\n🐾 <a href=\"https://t.me/dikaya_planeta_zoo\">Дикая планета</a> — удивительные животные и природа\n📜 <a href=\"https://t.me/bylo_vremya_istoriya\">Было время</a> — история, СССР и вещи из нашего детства\n💐 <a href=\"https://t.me/otkrytka_dnya_ru\">Открытка дня</a> — добрые открытки на каждый день",
@@ -312,7 +318,9 @@
    "image_key": "pixabay:1738309",
    "image_via": "fallback",
    "image_credit": "",
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T13:16:09.153942+03:00",
+   "message_id": 27
   },
   {
    "kind": "photo",
@@ -334,16 +342,18 @@
    "channel": "food",
    "rubric": "Лайфхак кухни",
    "time": "2026-11-01T12:44:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T13:16:09.153942+03:00",
+   "message_id": 21
   },
   {
    "id": "food-catalog",
    "channel": "food",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:44:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🚗 <a href=\"https://t.me/pod_kapotom_avto\">Под капотом</a> — авто-лайфхаки и ремонт своими руками\n🔨 <a href=\"https://t.me/ruki_iz_plech_diy\">Руки из плеч DIY</a> — ремонт, самоделки и хитрости мастеров\n🐾 <a href=\"https://t.me/dikaya_planeta_zoo\">Дикая планета</a> — удивительные животные и природа\n📜 <a href=\"https://t.me/bylo_vremya_istoriya\">Было время</a> — история, СССР и вещи из нашего детства\n💐 <a href=\"https://t.me/otkrytka_dnya_ru\">Открытка дня</a> — добрые открытки на каждый день",
@@ -356,14 +366,16 @@
    "image_key": "pixabay:563796",
    "image_via": "fallback",
    "image_credit": "",
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T13:16:09.153942+03:00",
+   "message_id": 22
   },
   {
    "id": "cards-catalog",
    "channel": "cards",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:54:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🚗 <a href=\"https://t.me/pod_kapotom_avto\">Под капотом</a> — авто-лайфхаки и ремонт своими руками\n🔨 <a href=\"https://t.me/ruki_iz_plech_diy\">Руки из плеч DIY</a> — ремонт, самоделки и хитрости мастеров\n🥗 <a href=\"https://t.me/vkusno_i_polezno_nam\">Вкусно и полезно</a> — простые рецепты и правильное питание\n🐾 <a href=\"https://t.me/dikaya_planeta_zoo\">Дикая планета</a> — удивительные животные и природа\n📜 <a href=\"https://t.me/bylo_vremya_istoriya\">Было время</a> — история, СССР и вещи из нашего детства",
@@ -376,14 +388,16 @@
    "image_key": "pixabay:1850126",
    "image_via": "fallback",
    "image_credit": "",
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T13:16:09.153942+03:00",
+   "message_id": 20
   },
   {
    "id": "nature-catalog",
    "channel": "nature",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:59:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🚗 <a href=\"https://t.me/pod_kapotom_avto\">Под капотом</a> — авто-лайфхаки и ремонт своими руками\n🔨 <a href=\"https://t.me/ruki_iz_plech_diy\">Руки из плеч DIY</a> — ремонт, самоделки и хитрости мастеров\n🥗 <a href=\"https://t.me/vkusno_i_polezno_nam\">Вкусно и полезно</a> — простые рецепты и правильное питание\n📜 <a href=\"https://t.me/bylo_vremya_istoriya\">Было время</a> — история, СССР и вещи из нашего детства\n💐 <a href=\"https://t.me/otkrytka_dnya_ru\">Открытка дня</a> — добрые открытки на каждый день",
@@ -396,7 +410,9 @@
    "image_key": "pixabay:9297255",
    "image_via": "fallback",
    "image_credit": "",
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T13:16:09.153942+03:00",
+   "message_id": 21
   },
   {
    "kind": "photo",
