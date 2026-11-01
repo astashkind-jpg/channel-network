@@ -774,9 +774,11 @@
    "channel": "intimacy",
    "rubric": "Факт",
    "time": "2026-11-01T22:44:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T23:37:43.502533+03:00",
+   "message_id": 24
   },
   {
    "kind": "photo",
