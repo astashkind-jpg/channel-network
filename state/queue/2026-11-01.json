@@ -49,9 +49,11 @@
    "channel": "food",
    "rubric": "Полезная замена",
    "time": "2026-11-01T08:04:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T08:22:38.081390+03:00",
+   "message_id": 20
   },
   {
    "kind": "photo",
