@@ -191,7 +191,7 @@
    "channel": "afterdark",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:07:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🍒 <a href=\"https://t.me/mezhdu_nami_18\">Между нами</a> — об отношениях и сексуальности без стеснения",
@@ -204,14 +204,16 @@
    "image_key": "pixabay:647400",
    "image_via": "fallback",
    "image_credit": "",
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T12:20:01.536592+03:00",
+   "message_id": 6
   },
   {
    "id": "diy-catalog",
    "channel": "diy",
    "rubric": "Каталог сети",
    "time": "2026-11-01T12:11:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
    "kind": "photo",
    "text": "📚 <b>Сеть каналов: наши каналы</b>\n\n🚗 <a href=\"https://t.me/pod_kapotom_avto\">Под капотом</a> — авто-лайфхаки и ремонт своими руками\n🥗 <a href=\"https://t.me/vkusno_i_polezno_nam\">Вкусно и полезно</a> — простые рецепты и правильное питание\n🐾 <a href=\"https://t.me/dikaya_planeta_zoo\">Дикая планета</a> — удивительные животные и природа\n📜 <a href=\"https://t.me/bylo_vremya_istoriya\">Было время</a> — история, СССР и вещи из нашего детства\n💐 <a href=\"https://t.me/otkrytka_dnya_ru\">Открытка дня</a> — добрые открытки на каждый день",
@@ -224,7 +226,9 @@
    "image_key": "pixabay:1073515",
    "image_via": "fallback",
    "image_credit": "",
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T12:20:01.536592+03:00",
+   "message_id": 23
   },
   {
    "id": "history-catalog",
