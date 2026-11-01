@@ -622,9 +622,11 @@
    "channel": "diy",
    "rubric": "Хитрость мастера",
    "time": "2026-11-01T19:55:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T20:11:32.815911+03:00",
+   "message_id": 25
   },
   {
    "kind": "photo",
