@@ -23,9 +23,11 @@
    "channel": "cards",
    "rubric": "Доброе утро",
    "time": "2026-11-01T06:48:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T07:26:27.390535+03:00",
+   "message_id": 18
   },
   {
    "kind": "photo",
