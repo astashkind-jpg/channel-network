@@ -539,9 +539,11 @@
    "channel": "nature",
    "rubric": "Видео",
    "time": "2026-11-01T15:44:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-01T16:26:46.099419+03:00",
+   "message_id": 22
   },
   {
    "kind": "photo",
