@@ -359,9 +359,11 @@
    "channel": "nature",
    "rubric": "Видео",
    "time": "2026-11-02T16:18:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T17:20:40.071369+03:00",
+   "message_id": 25
   },
   {
    "kind": "photo",
@@ -386,9 +388,11 @@
    "channel": "history",
    "rubric": "Загадка истории",
    "time": "2026-11-02T16:40:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T17:20:40.071369+03:00",
+   "message_id": 26
   },
   {
    "kind": "photo",
