@@ -440,9 +440,11 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-11-02T19:12:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T19:36:25.046457+03:00",
+   "message_id": 32
   },
   {
    "kind": "photo",
