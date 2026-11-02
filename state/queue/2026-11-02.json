@@ -182,9 +182,11 @@
    "channel": "history",
    "rubric": "Как жили в СССР",
    "time": "2026-11-02T10:32:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T11:43:13.112395+03:00",
+   "message_id": 25
   },
   {
    "kind": "photo",
