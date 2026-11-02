@@ -23,8 +23,9 @@
    "channel": "cards",
    "rubric": "Доброе утро",
    "time": "2026-11-03T06:32:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -49,8 +50,9 @@
    "channel": "food",
    "rubric": "Рецепт дня",
    "time": "2026-11-03T07:53:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -72,8 +74,9 @@
    "channel": "intimacy",
    "rubric": "Факт",
    "time": "2026-11-03T09:07:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -98,8 +101,9 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-11-03T09:24:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "video",
@@ -119,8 +123,9 @@
    "channel": "diy",
    "rubric": "Видео",
    "time": "2026-11-03T09:52:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -144,8 +149,9 @@
    "channel": "history",
    "rubric": "Вещь из прошлого",
    "time": "2026-11-03T10:00:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "video",
@@ -165,8 +171,9 @@
    "channel": "nature",
    "rubric": "Видео",
    "time": "2026-11-03T10:50:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -188,8 +195,9 @@
    "channel": "food",
    "rubric": "Лайфхак кухни",
    "time": "2026-11-03T12:20:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -211,8 +219,9 @@
    "channel": "cards",
    "rubric": "Повод дня",
    "time": "2026-11-03T12:38:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -260,8 +269,9 @@
    "channel": "diy",
    "rubric": "Хитрость мастера",
    "time": "2026-11-03T13:49:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "video",
@@ -281,8 +291,9 @@
    "channel": "auto",
    "rubric": "Видео",
    "time": "2026-11-03T14:18:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -304,8 +315,9 @@
    "channel": "intimacy",
    "rubric": "Психология пары",
    "time": "2026-11-03T14:59:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -329,8 +341,9 @@
    "channel": "nature",
    "rubric": "Удивительное животное",
    "time": "2026-11-03T15:32:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -355,8 +368,9 @@
    "channel": "history",
    "rubric": "Как жили в СССР",
    "time": "2026-11-03T17:09:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -378,8 +392,9 @@
    "channel": "food",
    "rubric": "Рецепт дня",
    "time": "2026-11-03T17:45:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -401,8 +416,9 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-11-03T20:01:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -424,8 +440,9 @@
    "channel": "diy",
    "rubric": "Самоделка",
    "time": "2026-11-03T20:36:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -464,8 +481,9 @@
    "channel": "nature",
    "rubric": "Видео",
    "time": "2026-11-03T20:47:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -490,8 +508,9 @@
    "channel": "history",
    "rubric": "Загадка истории",
    "time": "2026-11-03T21:04:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -513,8 +532,9 @@
    "channel": "cards",
    "rubric": "Спокойной ночи",
    "time": "2026-11-03T21:58:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
@@ -536,8 +556,9 @@
    "channel": "intimacy",
    "rubric": "Миф или правда",
    "time": "2026-11-03T22:22:00+03:00",
-   "status": "pending",
-   "auto": true
+   "status": "approved",
+   "auto": true,
+   "approved_by": "auto"
   },
   {
    "kind": "photo",
