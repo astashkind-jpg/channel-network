@@ -552,9 +552,11 @@
    "channel": "history",
    "rubric": "Как жили в СССР",
    "time": "2026-11-02T21:13:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T21:27:18.417876+03:00",
+   "message_id": 27
   },
   {
    "kind": "photo",
