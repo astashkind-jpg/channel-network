@@ -49,9 +49,11 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-11-02T08:06:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T09:02:20.850897+03:00",
+   "message_id": 30
   },
   {
    "kind": "photo",
@@ -73,9 +75,11 @@
    "channel": "food",
    "rubric": "Рецепт дня",
    "time": "2026-11-02T08:21:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T09:02:20.850897+03:00",
+   "message_id": 24
   },
   {
    "kind": "photo",
