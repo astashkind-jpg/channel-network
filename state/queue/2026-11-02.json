@@ -101,9 +101,11 @@
    "channel": "intimacy",
    "rubric": "Психология пары",
    "time": "2026-11-02T09:03:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T10:24:34.334720+03:00",
+   "message_id": 25
   },
   {
    "kind": "video",
@@ -123,9 +125,11 @@
    "channel": "diy",
    "rubric": "Видео",
    "time": "2026-11-02T09:12:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T10:24:34.334720+03:00",
+   "message_id": 26
   },
   {
    "kind": "photo",
@@ -150,9 +154,11 @@
    "channel": "nature",
    "rubric": "Удивительное животное",
    "time": "2026-11-02T09:19:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T10:24:34.334720+03:00",
+   "message_id": 24
   },
   {
    "kind": "photo",
