@@ -414,9 +414,11 @@
    "channel": "food",
    "rubric": "Рецепт дня",
    "time": "2026-11-02T17:30:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T18:29:08.796795+03:00",
+   "message_id": 26
   },
   {
    "kind": "photo",
