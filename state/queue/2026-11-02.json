@@ -283,9 +283,11 @@
    "channel": "auto",
    "rubric": "Разбор поломки",
    "time": "2026-11-02T14:04:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T14:54:51.289073+03:00",
+   "message_id": 31
   },
   {
    "kind": "photo",
@@ -307,9 +309,11 @@
    "channel": "diy",
    "rubric": "Самоделка",
    "time": "2026-11-02T14:04:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T14:54:51.289073+03:00",
+   "message_id": 27
   },
   {
    "kind": "photo",
@@ -331,9 +335,11 @@
    "channel": "intimacy",
    "rubric": "Миф или правда",
    "time": "2026-11-02T14:13:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T14:54:51.289073+03:00",
+   "message_id": 26
   },
   {
    "kind": "video",
