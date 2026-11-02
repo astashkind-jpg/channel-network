@@ -471,9 +471,11 @@
    "channel": "diy",
    "rubric": "Хитрость мастера",
    "time": "2026-11-02T20:05:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T20:30:55.603271+03:00",
+   "message_id": 28
   },
   {
    "kind": "photo",
@@ -498,9 +500,11 @@
    "channel": "nature",
    "rubric": "Чудо природы",
    "time": "2026-11-02T20:24:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T20:30:55.603271+03:00",
+   "message_id": 26
   },
   {
    "kind": "photo",
