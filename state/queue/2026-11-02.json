@@ -578,9 +578,11 @@
    "channel": "cards",
    "rubric": "Спокойной ночи",
    "time": "2026-11-02T21:52:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-02T22:29:48.169932+03:00",
+   "message_id": 24
   },
   {
    "kind": "photo",
