@@ -446,9 +446,11 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-11-03T20:01:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T20:51:32.460461+03:00",
+   "message_id": 35
   },
   {
    "kind": "photo",
@@ -470,9 +472,11 @@
    "channel": "diy",
    "rubric": "Самоделка",
    "time": "2026-11-03T20:36:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T20:51:32.460461+03:00",
+   "message_id": 31
   },
   {
    "kind": "photo",
@@ -511,9 +515,11 @@
    "channel": "nature",
    "rubric": "Видео",
    "time": "2026-11-03T20:47:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T20:51:32.460461+03:00",
+   "message_id": 29
   },
   {
    "kind": "photo",
