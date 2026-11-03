@@ -365,9 +365,11 @@
    "channel": "nature",
    "rubric": "Удивительное животное",
    "time": "2026-11-03T15:32:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T16:44:37.478922+03:00",
+   "message_id": 28
   },
   {
    "kind": "photo",
