@@ -570,9 +570,11 @@
    "channel": "cards",
    "rubric": "Спокойной ночи",
    "time": "2026-11-03T21:58:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T22:53:55.982710+03:00",
+   "message_id": 27
   },
   {
    "kind": "photo",
@@ -594,9 +596,11 @@
    "channel": "intimacy",
    "rubric": "Миф или правда",
    "time": "2026-11-03T22:22:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T22:53:55.982710+03:00",
+   "message_id": 30
   },
   {
    "kind": "photo",
