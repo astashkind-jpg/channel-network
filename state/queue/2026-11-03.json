@@ -209,9 +209,11 @@
    "channel": "food",
    "rubric": "Лайфхак кухни",
    "time": "2026-11-03T12:20:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T12:26:48.426095+03:00",
+   "message_id": 28
   },
   {
    "kind": "photo",
