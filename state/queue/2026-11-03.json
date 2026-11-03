@@ -544,9 +544,11 @@
    "channel": "history",
    "rubric": "Загадка истории",
    "time": "2026-11-03T21:04:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T21:52:03.644984+03:00",
+   "message_id": 30
   },
   {
    "kind": "photo",
