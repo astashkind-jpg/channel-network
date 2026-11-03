@@ -287,9 +287,11 @@
    "channel": "diy",
    "rubric": "Хитрость мастера",
    "time": "2026-11-03T13:49:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T14:27:31.628286+03:00",
+   "message_id": 30
   },
   {
    "kind": "video",
@@ -309,9 +311,11 @@
    "channel": "auto",
    "rubric": "Видео",
    "time": "2026-11-03T14:18:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T14:27:31.628286+03:00",
+   "message_id": 34
   },
   {
    "kind": "photo",
