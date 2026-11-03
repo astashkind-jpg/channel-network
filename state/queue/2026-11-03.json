@@ -78,9 +78,11 @@
    "channel": "intimacy",
    "rubric": "Факт",
    "time": "2026-11-03T09:07:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T10:06:49.971192+03:00",
+   "message_id": 28
   },
   {
    "kind": "photo",
@@ -105,9 +107,11 @@
    "channel": "auto",
    "rubric": "Лайфхак",
    "time": "2026-11-03T09:24:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T10:06:49.971192+03:00",
+   "message_id": 33
   },
   {
    "kind": "video",
@@ -127,9 +131,11 @@
    "channel": "diy",
    "rubric": "Видео",
    "time": "2026-11-03T09:52:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T10:06:49.971192+03:00",
+   "message_id": 29
   },
   {
    "kind": "photo",
@@ -153,9 +159,11 @@
    "channel": "history",
    "rubric": "Вещь из прошлого",
    "time": "2026-11-03T10:00:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T10:06:49.971192+03:00",
+   "message_id": 28
   },
   {
    "kind": "video",
