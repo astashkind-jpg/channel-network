@@ -235,9 +235,11 @@
    "channel": "cards",
    "rubric": "Повод дня",
    "time": "2026-11-03T12:38:00+03:00",
-   "status": "approved",
+   "status": "published",
    "auto": true,
-   "approved_by": "auto"
+   "approved_by": "auto",
+   "published_at": "2026-11-03T13:29:21.425675+03:00",
+   "message_id": 26
   },
   {
    "kind": "photo",
