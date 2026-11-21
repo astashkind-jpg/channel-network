@@ -22,5 +22,5 @@ jobs:
         run: python3 -m unittest discover -s tests -p "test_fleet_watchdog.py"
       - name: Check all four repositories (read-only)
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.FLEET_READ_TOKEN || github.token }}
         run: python3 scripts/fleet_watchdog.py
