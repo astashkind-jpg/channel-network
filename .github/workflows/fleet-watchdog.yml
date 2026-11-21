@@ -18,6 +18,8 @@ jobs:
     timeout-minutes: 3
     steps:
       - uses: actions/checkout@v4
+      - name: Offline watchdog unit tests
+        run: python3 -m unittest discover -s tests -p "test_fleet_watchdog.py"
       - name: Check all four repositories (read-only)
         env:
           GH_TOKEN: ${{ github.token }}
