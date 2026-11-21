@@ -63,7 +63,7 @@ class AI:
                 last_err = e
                 # Do not repeat permanent HTTP client errors (e.g. 422 invalid payload).
                 # Rate limits and transient client errors can recover on retry.
-                status = re.search(r"HTTP (4\\d\\d)\\b", str(e))
+                status = re.search(r"HTTP (4\d\d)\b", str(e))
                 if status and int(status.group(1)) not in (408, 409, 425, 429):
                     break
                 if "пустой ответ" in str(e) and attempt >= 1:
