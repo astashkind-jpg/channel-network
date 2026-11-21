@@ -40,8 +40,10 @@ class WatchdogTests(unittest.TestCase):
         failed = run("Facts", "failure")
         failed["workflow_id"] = 2
         fetch.return_value = {"workflow_runs": [successful, failed]}
-        _, ok = watchdog.check("vzolote-bot")
+        message, ok = watchdog.check("vzolote-bot")
         self.assertFalse(ok)
+        self.assertIn("UNHEALTHY: Facts=failure", message)
+        self.assertIn("https://github.com/example/actions/runs/1", message)
 
     @patch.object(watchdog, "get_json")
     def test_no_runs(self, fetch):
