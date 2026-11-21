@@ -38,10 +38,17 @@ def check(repo):
     updated = recent.get("updated_at") or "?"
     failed = [r for r in runs if r.get("conclusion") in ("failure", "timed_out")]
     link = recent.get("html_url", "")
-    # A failed latest run should be visible as a failed health check.
-    ok = conclusion not in ("failure", "timed_out", "action_required")
+    # Inspect the most recent run of each workflow, not just the newest run
+    # overall: a successful news workflow must not hide a failing facts workflow.
+    latest_by_workflow = {}
+    for run in runs:
+        key = run.get("workflow_id") or run.get("name") or "unknown"
+        latest_by_workflow.setdefault(key, run)
+    bad = ("failure", "timed_out", "action_required")
+    ok = all(r.get("conclusion") not in bad for r in latest_by_workflow.values())
     return (f"{repo}: latest={name} status={status} conclusion={conclusion} "
-            f"updated={updated}; failures_in_last_30={len(failed)} {link}"), ok
+            f"updated={updated}; workflows_checked={len(latest_by_workflow)} "
+            f"failures_in_last_30={len(failed)} {link}"), ok
 
 
 def main():
