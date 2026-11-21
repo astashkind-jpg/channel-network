@@ -61,8 +61,11 @@ class AI:
                 return self._chat(model, system, user, temperature)
             except AIError as e:
                 last_err = e
-                if " 400" in str(e) or " 401" in str(e) or " 403" in str(e) or " 404" in str(e):
-                    break  # ошибка настроек — повтор не поможет
+                # Do not repeat permanent HTTP client errors (e.g. 422 invalid payload).
+                # Rate limits and transient client errors can recover on retry.
+                status = re.search(r"HTTP (4\\d\\d)\\b", str(e))
+                if status and int(status.group(1)) not in (408, 409, 425, 429):
+                    break
                 if "пустой ответ" in str(e) and attempt >= 1:
                     break  # дважды пусто — пусть пишет запасная модель
                 log.warning("AI %s попытка %d: %s", model, attempt + 1, e)
