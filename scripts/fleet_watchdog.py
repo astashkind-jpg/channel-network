@@ -36,8 +36,10 @@ def check(repo):
     updated = recent.get("updated_at") or "?"
     failed = [r for r in runs if r.get("conclusion") in ("failure", "timed_out")]
     link = recent.get("html_url", "")
+    # A failed latest run should be visible as a failed health check.
+    ok = conclusion not in ("failure", "timed_out", "action_required")
     return (f"{repo}: latest={name} status={status} conclusion={conclusion} "
-            f"updated={updated}; failures_in_last_30={len(failed)} {link}"), True
+            f"updated={updated}; failures_in_last_30={len(failed)} {link}"), ok
 
 
 def main():
