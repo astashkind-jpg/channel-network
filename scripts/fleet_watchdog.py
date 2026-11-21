@@ -26,7 +26,9 @@ def get_json(url):
 def check(repo):
     url = f"https://api.github.com/repos/{OWNER}/{repo}/actions/runs?per_page=30"
     data = get_json(url)
-    runs = [r for r in data.get("workflow_runs", []) if r.get("event") != "pull_request"]
+    runs = [r for r in data.get("workflow_runs", [])
+            if r.get("event") != "pull_request"
+            and r.get("name") != "Telegram fleet watchdog"]
     if not runs:
         return f"{repo}: no workflow runs found", False
     recent = runs[0]
