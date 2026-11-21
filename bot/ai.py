@@ -89,7 +89,14 @@ class AI:
         )
         if resp.status_code != 200:
             raise AIError(f"Yandex HTTP {resp.status_code}: {resp.text[:300]}")
-        content = resp.json()["choices"][0]["message"].get("content") or ""
+        payload = resp.json()
+        usage = payload.get("usage") or {}
+        log.info(
+            "AI usage model=%s prompt_tokens=%s completion_tokens=%s total_tokens=%s",
+            model, usage.get("prompt_tokens"), usage.get("completion_tokens"),
+            usage.get("total_tokens"),
+        )
+        content = payload["choices"][0]["message"].get("content") or ""
         # рассуждающие модели иногда возвращают ход мыслей в <think>…</think>
         content = THINK_RE.sub("", content).strip()
         if not content:
