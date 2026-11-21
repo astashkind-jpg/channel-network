@@ -45,10 +45,16 @@ def check(repo):
         key = run.get("workflow_id") or run.get("name") or "unknown"
         latest_by_workflow.setdefault(key, run)
     bad = ("failure", "timed_out", "action_required")
-    ok = all(r.get("conclusion") not in bad for r in latest_by_workflow.values())
+    unhealthy = [r for r in latest_by_workflow.values() if r.get("conclusion") in bad]
+    ok = not unhealthy
+    details = "; ".join(
+        f"{r.get('name', '?')}={r.get('conclusion')} {r.get('html_url', '')}"
+        for r in unhealthy
+    )
     return (f"{repo}: latest={name} status={status} conclusion={conclusion} "
             f"updated={updated}; workflows_checked={len(latest_by_workflow)} "
-            f"failures_in_last_30={len(failed)} {link}"), ok
+            f"failures_in_last_30={len(failed)} {link}"
+            + (f"; UNHEALTHY: {details}" if details else "")), ok
 
 
 def main():
