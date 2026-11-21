@@ -34,6 +34,16 @@ class WatchdogTests(unittest.TestCase):
         self.assertFalse(ok)
 
     @patch.object(watchdog, "get_json")
+    def test_other_workflow_failure_not_masked(self, fetch):
+        successful = run("News", "success")
+        successful["workflow_id"] = 1
+        failed = run("Facts", "failure")
+        failed["workflow_id"] = 2
+        fetch.return_value = {"workflow_runs": [successful, failed]}
+        _, ok = watchdog.check("vzolote-bot")
+        self.assertFalse(ok)
+
+    @patch.object(watchdog, "get_json")
     def test_no_runs(self, fetch):
         fetch.return_value = {"workflow_runs": []}
         _, ok = watchdog.check("flight-monitor")
