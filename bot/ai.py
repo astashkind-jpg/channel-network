@@ -234,7 +234,12 @@ class AI:
             timeout=120)
         if resp.status_code != 200:
             raise AIError(f"проверка картинок HTTP {resp.status_code}: {resp.text[:200]}")
-        message = resp.json()["choices"][0]["message"]
+        payload = resp.json()
+        usage = payload.get("usage") or {}
+        log.info("AI vision usage model=%s prompt_tokens=%s completion_tokens=%s total_tokens=%s",
+                 self.n.image_check_model, usage.get("prompt_tokens"),
+                 usage.get("completion_tokens"), usage.get("total_tokens"))
+        message = payload["choices"][0]["message"]
         answer = THINK_RE.sub("", message.get("content") or "").strip()
         if not answer:  # ответ мог остаться только в рассуждениях — берём последнее число оттуда
             reasoning = message.get("reasoning_content") or message.get("reasoning") or ""
@@ -286,7 +291,12 @@ class AI:
             timeout=120)
         if resp.status_code != 200:
             raise AIError(f"проверка картинки HTTP {resp.status_code}: {resp.text[:200]}")
-        message = resp.json()["choices"][0]["message"]
+        payload = resp.json()
+        usage = payload.get("usage") or {}
+        log.info("AI vision usage model=%s prompt_tokens=%s completion_tokens=%s total_tokens=%s",
+                 self.n.image_check_model, usage.get("prompt_tokens"),
+                 usage.get("completion_tokens"), usage.get("total_tokens"))
+        message = payload["choices"][0]["message"]
         answer = THINK_RE.sub("", message.get("content") or "").strip()
         if not answer:
             answer = (message.get("reasoning_content") or "").strip().splitlines()[-1:] or [""]
