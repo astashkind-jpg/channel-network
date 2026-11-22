@@ -1,11 +1,12 @@
 """Offline unit tests for the fleet watchdog (no GitHub credentials needed)."""
 import unittest
+from datetime import datetime, timezone
 from unittest.mock import patch
 from scripts import fleet_watchdog as watchdog
 
 
 def run(name, conclusion, event="schedule"):
-    return {"name": name, "conclusion": conclusion, "event": event,
+    return {"created_at": datetime.now(timezone.utc).isoformat(), "name": name, "conclusion": conclusion, "event": event,
             "status": "completed", "updated_at": "2026-11-21T00:00:00Z",
             "html_url": "https://github.com/example/actions/runs/1"}
 
@@ -67,6 +68,28 @@ class WatchdogTests(unittest.TestCase):
         self.assertFalse(ok)
         self.assertIn("UNHEALTHY: Publish=startup_failure", message)
         self.assertIn("unhealthy_runs_in_last_100=1", message)
+
+    @patch.object(watchdog, "get_json")
+    def test_manual_success_does_not_mask_missing_schedule(self, fetch):
+        fetch.return_value = {"workflow_runs": [run("news-bot", "success", "workflow_dispatch")]}
+        message, ok = watchdog.check("news-bot")
+        self.assertFalse(ok)
+        self.assertIn("NO_SCHEDULE_RUN", message)
+
+    @patch.object(watchdog, "get_json")
+    def test_stale_schedule_detected(self, fetch):
+        old = run("tick", "success")
+        old["created_at"] = "2026-11-04T04:57:00Z"
+        fetch.return_value = {"workflow_runs": [old]}
+        message, ok = watchdog.check("channel-network")
+        self.assertFalse(ok)
+        self.assertIn("STALE_SCHEDULE", message)
+
+    @patch.object(watchdog, "get_json")
+    def test_recent_schedule_healthy(self, fetch):
+        fetch.return_value = {"workflow_runs": [run("news-bot", "success")]}
+        _, ok = watchdog.check("news-bot")
+        self.assertTrue(ok)
 
     @patch.object(watchdog, "get_json")
     def test_no_runs(self, fetch):
