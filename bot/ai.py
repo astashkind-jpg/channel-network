@@ -72,7 +72,9 @@ class AI:
             except (requests.RequestException, KeyError, IndexError, ValueError) as e:
                 last_err = e
                 log.warning("AI %s попытка %d: %s", model, attempt + 1, e)
-            time.sleep(3 * (attempt + 1))
+            # No reason to delay fallback after the final failed attempt.
+            if attempt < 2:
+                time.sleep(3 * (attempt + 1))
         raise AIError(f"{model}: {last_err}")
 
     def _chat(self, model: str, system: str, user: str, temperature: float) -> str:
