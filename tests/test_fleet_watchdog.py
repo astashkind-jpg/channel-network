@@ -51,6 +51,14 @@ class WatchdogTests(unittest.TestCase):
         message, ok = watchdog.check("flight-monitor")
         self.assertFalse(ok)
         self.assertIn("UNHEALTHY: Publish=cancelled", message)
+        self.assertIn("unhealthy_runs_in_last_100=1", message)
+
+    @patch.object(watchdog, "get_json")
+    def test_action_required_counted(self, fetch):
+        fetch.return_value = {"workflow_runs": [run("Publish", "action_required")]}
+        message, ok = watchdog.check("flight-monitor")
+        self.assertFalse(ok)
+        self.assertIn("unhealthy_runs_in_last_100=1", message)
 
     @patch.object(watchdog, "get_json")
     def test_no_runs(self, fetch):
