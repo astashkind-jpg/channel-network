@@ -24,7 +24,7 @@ def get_json(url):
 
 
 def check(repo):
-    url = f"https://api.github.com/repos/{OWNER}/{repo}/actions/runs?per_page=30"
+    url = f"https://api.github.com/repos/{OWNER}/{repo}/actions/runs?per_page=100"
     data = get_json(url)
     runs = [r for r in data.get("workflow_runs", [])
             if r.get("event") != "pull_request"
