@@ -44,7 +44,7 @@ def check(repo):
     for run in runs:
         key = run.get("workflow_id") or run.get("name") or "unknown"
         latest_by_workflow.setdefault(key, run)
-    bad = ("failure", "timed_out", "action_required")
+    bad = ("failure", "timed_out", "action_required", "cancelled")
     unhealthy = [r for r in latest_by_workflow.values() if r.get("conclusion") in bad]
     ok = not unhealthy
     details = "; ".join(
