@@ -61,6 +61,14 @@ class WatchdogTests(unittest.TestCase):
         self.assertIn("unhealthy_runs_in_last_100=1", message)
 
     @patch.object(watchdog, "get_json")
+    def test_startup_failure_is_unhealthy(self, fetch):
+        fetch.return_value = {"workflow_runs": [run("Publish", "startup_failure")]}
+        message, ok = watchdog.check("flight-monitor")
+        self.assertFalse(ok)
+        self.assertIn("UNHEALTHY: Publish=startup_failure", message)
+        self.assertIn("unhealthy_runs_in_last_100=1", message)
+
+    @patch.object(watchdog, "get_json")
     def test_no_runs(self, fetch):
         fetch.return_value = {"workflow_runs": []}
         _, ok = watchdog.check("flight-monitor")
