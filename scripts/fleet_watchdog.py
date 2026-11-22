@@ -7,10 +7,12 @@ import os
 import sys
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 OWNER = "astashkind-jpg"
 REPOS = ("flight-monitor", "news-bot", "vzolote-bot", "channel-network")
+SCHEDULE_WATCH = {"news-bot", "channel-network"}
+MAX_SCHEDULE_AGE = timedelta(hours=3)
 TOKEN = os.getenv("GH_TOKEN", "")
 HEADERS = {"Accept": "application/vnd.github+json", "User-Agent": "telegram-fleet-watchdog"}
 if TOKEN:
@@ -46,6 +48,24 @@ def check(repo):
     bad = ("failure", "timed_out", "action_required", "cancelled", "startup_failure")
     unhealthy = [r for r in latest_by_workflow.values() if r.get("conclusion") in bad]
     ok = not unhealthy
+    # Check scheduled publishing independently of successful manual/PR runs.
+    # A missing schedule event is a failure, not evidence of a healthy pipeline.
+    stale_schedule = ""
+    if repo in SCHEDULE_WATCH:
+        scheduled = [r for r in runs if r.get("event") == "schedule"
+                     and r.get("name") != "Telegram fleet watchdog"]
+        if not scheduled:
+            stale_schedule = "NO_SCHEDULE_RUN_IN_LAST_100"
+        else:
+            try:
+                newest = max(datetime.fromisoformat(
+                    r["created_at"].replace("Z", "+00:00")) for r in scheduled)
+                if datetime.now(timezone.utc) - newest > MAX_SCHEDULE_AGE:
+                    stale_schedule = f"STALE_SCHEDULE last={newest.isoformat()}"
+            except (KeyError, TypeError, ValueError):
+                stale_schedule = "SCHEDULE_TIMESTAMP_MISSING"
+        if stale_schedule:
+            ok = False
     failure_count = sum(r.get("conclusion") in bad for r in runs)
     details = "; ".join(
         f"{r.get('name', '?')}={r.get('conclusion')} {r.get('html_url', '')}"
@@ -54,7 +74,8 @@ def check(repo):
     return (f"{repo}: latest={name} status={status} conclusion={conclusion} "
             f"updated={updated}; workflows_checked={len(latest_by_workflow)} "
             f"unhealthy_runs_in_last_100={failure_count} {link}"
-            + (f"; UNHEALTHY: {details}" if details else "")), ok
+            + (f"; UNHEALTHY: {details}" if details else "")
+            + (f"; {stale_schedule}" if stale_schedule else "")), ok
 
 
 def main():
