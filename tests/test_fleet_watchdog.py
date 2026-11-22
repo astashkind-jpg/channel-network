@@ -46,6 +46,13 @@ class WatchdogTests(unittest.TestCase):
         self.assertIn("https://github.com/example/actions/runs/1", message)
 
     @patch.object(watchdog, "get_json")
+    def test_cancelled_publication_is_unhealthy(self, fetch):
+        fetch.return_value = {"workflow_runs": [run("Publish", "cancelled")]}
+        message, ok = watchdog.check("flight-monitor")
+        self.assertFalse(ok)
+        self.assertIn("UNHEALTHY: Publish=cancelled", message)
+
+    @patch.object(watchdog, "get_json")
     def test_no_runs(self, fetch):
         fetch.return_value = {"workflow_runs": []}
         _, ok = watchdog.check("flight-monitor")
