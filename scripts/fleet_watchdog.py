@@ -53,7 +53,7 @@ def check(repo):
     )
     return (f"{repo}: latest={name} status={status} conclusion={conclusion} "
             f"updated={updated}; workflows_checked={len(latest_by_workflow)} "
-            f"failures_in_last_30={len(failed)} {link}"
+            f"failures_in_last_100={len(failed)} {link}"
             + (f"; UNHEALTHY: {details}" if details else "")), ok
 
 
