@@ -36,7 +36,6 @@ def check(repo):
     status = recent.get("status", "?")
     conclusion = recent.get("conclusion") or "pending"
     updated = recent.get("updated_at") or "?"
-    failed = [r for r in runs if r.get("conclusion") in ("failure", "timed_out")]
     link = recent.get("html_url", "")
     # Inspect the most recent run of each workflow, not just the newest run
     # overall: a successful news workflow must not hide a failing facts workflow.
@@ -47,13 +46,14 @@ def check(repo):
     bad = ("failure", "timed_out", "action_required", "cancelled")
     unhealthy = [r for r in latest_by_workflow.values() if r.get("conclusion") in bad]
     ok = not unhealthy
+    failure_count = sum(r.get("conclusion") in bad for r in runs)
     details = "; ".join(
         f"{r.get('name', '?')}={r.get('conclusion')} {r.get('html_url', '')}"
         for r in unhealthy
     )
     return (f"{repo}: latest={name} status={status} conclusion={conclusion} "
             f"updated={updated}; workflows_checked={len(latest_by_workflow)} "
-            f"failures_in_last_100={len(failed)} {link}"
+            f"unhealthy_runs_in_last_100={failure_count} {link}"
             + (f"; UNHEALTHY: {details}" if details else "")), ok
 
 
